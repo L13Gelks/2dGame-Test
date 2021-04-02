@@ -19,7 +19,8 @@ private:
         RunDown,
         RunRight,
         RunLeft,
-        Jump,
+        JumpUp,
+        JumpDown,
         Count
     };
 private:

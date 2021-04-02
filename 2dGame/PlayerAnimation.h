@@ -12,7 +12,7 @@ class PlayerAnimation
     private:
         sf::Texture texture;
         int nFrames = 0;
-        static constexpr float  holdTime = 0.06f;
+        static constexpr float  holdTime = 0.05f;
         std::string frames[30];
         int iFrame = 0;
         float time = 0.0f;

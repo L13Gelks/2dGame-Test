@@ -47,17 +47,16 @@ int main()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
             dir.x += 1;
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
-            fucker.shift = true;
-        }
-        else {
-            fucker.shift = false;
-        }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
             fucker.jump = true;
         }
-
-        /*dir.y += 1;*/
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift )) {
+            fucker.shift = true;
+        }
+        else if (!fucker.jump) {
+            fucker.shift = false;
+        }
+      
         fucker.SetDirection(dir);
         //update model
         fucker.Update(dt);

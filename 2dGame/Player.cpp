@@ -10,7 +10,8 @@ Player::Player(const sf::Vector2f& pos)
     animations[int(AnimationIndex::WalkingLeft)] = PlayerAnimation(2, 20, "sprite/Walk (", "1", ").png");
     animations[int(AnimationIndex::RunRight)] = PlayerAnimation(1, 20, "sprite/Run (", "1", ").png");
     animations[int(AnimationIndex::RunLeft)] = PlayerAnimation(2, 20, "sprite/Run (", "1", ").png");
-    animations[int(AnimationIndex::Jump)] = PlayerAnimation(0, 30, "sprite/Jump (", "1", ").png");
+    animations[int(AnimationIndex::JumpUp)] = PlayerAnimation(3, 15, "sprite/Jump (", "1", ").png");
+    animations[int(AnimationIndex::JumpDown)] = PlayerAnimation(4, 15, "sprite/Jump (", "16", ").png");
 }
 
 void Player::Draw(sf::RenderTarget& rt) const
@@ -63,8 +64,11 @@ void Player::SetDirection(sf::Vector2f& dir)
         dir.x = 0;
         vel = dir * speed;
     }
-    else if (dir.y != 0) {
-        curAnimation = AnimationIndex::Jump;
+    else if (dir.y < 0) {
+        curAnimation = AnimationIndex::JumpUp;
+    }
+    else if (dir.y > 0) {
+        curAnimation = AnimationIndex::JumpDown;
     }
     else if (dir.x == 0.0f && dir.y == 0.0f) {
         curAnimation = AnimationIndex::Idle;
@@ -91,17 +95,17 @@ void Player::SetDirection(sf::Vector2f& dir)
         faceDir = 1;
         curAnimation = AnimationIndex::WalkingLeft;
     }
-    if (sprite.getPosition().y > 400) {
-        pos.y = 400;
-        sprite.setPosition(pos);
-        vel.y = 0;
-    }
 }
 
 void Player::Update(float dt)
 {
+    if (sprite.getPosition().y > 400) {
+        pos.y = 400;
+        vel.y = 0;
+    }
     pos += vel * dt;
     animations[int(curAnimation)].Update(dt);
-    animations[int(curAnimation)].ApplyToSprite(sprite);
     sprite.setPosition(pos);
+    animations[int(curAnimation)].ApplyToSprite(sprite);
+    
 }

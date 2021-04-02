@@ -9,8 +9,13 @@ PlayerAnimation::PlayerAnimation(int value_in, int frames_in, std::string str_1,
     nFrames = frames_in;
     std::string url = str1 + str2 + str3;
     texture.loadFromFile(url);
+    int pos = 0;
+    if (value_in != 4) { pos = 0; }
+    else { pos = 15; }
+
     for (int i = 0; i < nFrames; i++) {
-        str2 = std::to_string((i + 1));
+        
+        str2 = std::to_string((pos++ + 1));
         url = str1 + str2 + str3;
         frames[i] = { url };
     }
