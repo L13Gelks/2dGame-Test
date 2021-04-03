@@ -3,6 +3,12 @@
 PlayerAnimation::PlayerAnimation(int value_in, int frames_in, std::string str_1, std::string str_2, std::string str_3)
 {
     value = value_in;
+    if (value != 3 && value != 4) {
+        //Normal animation time
+        holdTime = 0.05f;
+    }
+    else  { holdTime = 0.08f; } //Jump animation time
+
     str1 = str_1;
     str2 = str_2;
     str3 = str_3;
@@ -49,6 +55,19 @@ void PlayerAnimation::Update(float dt)
         time -= holdTime;
         Advance();
     }
+}
+
+void PlayerAnimation::resetCounter()
+{
+    iFrame = 0;
+}
+
+bool PlayerAnimation::isLastFrame()
+{
+    if (iFrame == nFrames - 1) {
+        return true;
+    }
+    return false;
 }
 
 void PlayerAnimation::Advance()
