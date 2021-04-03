@@ -12,7 +12,7 @@ int main()
 {
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(1200, 600), "SFML window");
-    Player fucker({ 200.0f,100.0f });
+    Player fucker({ 200.0f,180.0f });
     //dt
     auto tp = std::chrono::steady_clock::now();
     // Start the game loop
@@ -35,12 +35,6 @@ int main()
         }
         //handle input
         sf::Vector2f dir = { 0.0f,0.0f };
-        if (!fucker.jump && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-            /*dir.y -= 1;*/
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-            /*dir.y += 1;*/
-        }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
             dir.x -= 1;
         }
@@ -50,14 +44,13 @@ int main()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
             fucker.shift = true;
         }
-        else {
+        else if (!fucker.jump) {
             fucker.shift = false;
-        }
+        } 
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
             fucker.jump = true;
         }
-
-        /*dir.y += 1;*/
         fucker.SetDirection(dir);
         //update model
         fucker.Update(dt);

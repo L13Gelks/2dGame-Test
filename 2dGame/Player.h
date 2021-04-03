@@ -11,27 +11,28 @@ private:
     enum class AnimationIndex
     {
         Idle,
-        WalkingUp,
-        WalkingDown,
         WalkingRight,
         WalkingLeft,
         RunUp,
         RunDown,
         RunRight,
         RunLeft,
-        Jump,
+        JumpUp,
+        JumpDown,
         Count
     };
 private:
-    int jump_time = 90;
+    int jump_time = (68);
     bool faceDir = 0;
     bool walking = false;
     bool running = false;
-    int time = 1;
-    float speed = 70.0f;
+    bool shiftPressed = false;
+    int time = 0;
+    float speed = 0.0f;
     sf::Vector2f pos;
     sf::Vector2f vel = { 0.0f, 0.0f };
     sf::Sprite sprite;
     PlayerAnimation animations[int(AnimationIndex::Count)];
     AnimationIndex curAnimation = AnimationIndex::Idle;
+    AnimationIndex lastAnimation = AnimationIndex::Idle;
 };
