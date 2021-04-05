@@ -14,7 +14,7 @@ PlayerAnimation::PlayerAnimation(int value_in, int frames_in, std::string str_1,
     str3 = str_3;
     nFrames = frames_in;
     std::string url = str1 + str2 + str3;
-    texture.loadFromFile(url);
+
     int pos = 0;
     if (value_in != 4) { pos = 0; }
     else { pos = 15; }
@@ -23,14 +23,16 @@ PlayerAnimation::PlayerAnimation(int value_in, int frames_in, std::string str_1,
         
         str2 = std::to_string((pos++ + 1));
         url = str1 + str2 + str3;
-        frames[i] = { url };
+        texture.loadFromFile(url);
+        frame[i] = texture;
     }
 }
 
 void PlayerAnimation::ApplyToSprite(sf::Sprite& s)
 {
-    texture.loadFromFile(frames[iFrame]);
-    s.setTexture(texture);
+    //texture.loadFromFile(frames[iFrame]);
+    //s.setTexture(texture);
+    s.setTexture(frame[iFrame]);
     s.setOrigin({ s.getLocalBounds().width / 2, 0 });
 
     if (value == 2) {

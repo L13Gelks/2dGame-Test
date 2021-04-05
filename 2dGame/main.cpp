@@ -47,7 +47,6 @@ int main()
         else if (!fucker.IsJumping()) {
             fucker.SetShiftPressed(false);
         } 
-
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
             fucker.SetJumping(true);
         }

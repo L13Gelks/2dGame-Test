@@ -16,6 +16,7 @@ class PlayerAnimation
         int nFrames = 0;
         float  holdTime = 0.0f;
         std::string frames[30];
+        sf::Texture frame[30];
         int iFrame = 0;
         float time = 0.0f;
         std::string str1 = "";
