@@ -125,3 +125,25 @@ void Player::Update(float dt)
     sprite.setPosition(pos);
     animations[int(curAnimation)].ApplyToSprite(sprite);
 }
+
+bool Player::IsJumping() const
+{
+    return jump;
+}
+
+bool Player::IsShiftPressed() const
+{
+    return shiftPressed;
+}
+
+void Player::SetJumping(bool jumping)
+{
+    jump = jumping;
+}
+
+void Player::SetShiftPressed(bool shiftp)
+{
+    shiftPressed = shiftp;
+}
+
+
