@@ -1,3 +1,7 @@
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -6,10 +10,14 @@
 #include "Player.h"
 
 
-
-
 int main()
 {
+    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
+    _CrtSetReportMode(_CRT_ERROR, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_ERROR, _CRTDBG_FILE_STDERR);
+    _CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_FILE);
+    _CrtSetReportFile(_CRT_ASSERT, _CRTDBG_FILE_STDERR);
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(1200, 600), "SFML window");
     Player fucker({ 200.0f,180.0f });
@@ -46,7 +54,7 @@ int main()
         }
         else if (!fucker.IsJumping()) {
             fucker.SetShiftPressed(false);
-        } 
+        }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
             fucker.SetJumping(true);
         }
@@ -60,5 +68,6 @@ int main()
         // Update the window
         window.display();
     }
+    _CrtDumpMemoryLeaks();
     return EXIT_SUCCESS;
 }
