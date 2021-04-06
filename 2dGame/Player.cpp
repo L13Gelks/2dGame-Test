@@ -27,19 +27,19 @@ void Player::SetDirection(sf::Vector2f& dir)
         else { dir.y += 1; }
 
         if (!walking && !running && !shiftPressed) {
-            if (faceDir) { dir.x = -0.2; }
-            else { dir.x = 0.2; }
-            dir.y *= 0.5;
+            if (faceDir) { dir.x = -0.2f; }
+            else { dir.x = 0.2f; }
+            dir.y *= 0.5f;
         }
         else if (walking && !shiftPressed) {
-            if (faceDir) { dir.x = -0.4; }
-            else { dir.x = 0.4; }
-            dir.y *= 0.6;
+            if (faceDir) { dir.x = -0.4f; }
+            else { dir.x = 0.4f; }
+            dir.y *= 0.6f;
         }
         else if (running || shiftPressed) {
-            if (faceDir) { dir.x = -1.4; }
-            else { dir.x = 1.4; }
-            dir.y *= 0.8;
+            if (faceDir) { dir.x = -1.4f; }
+            else { dir.x = 1.4f; }
+            dir.y *= 0.8f;
         }
 
         if (time > jump_time) {

@@ -19,19 +19,41 @@ PlayerAnimation::PlayerAnimation(int value_in, int frames_in, std::string str_1,
     if (value_in != 4) { pos = 0; }
     else { pos = 15; }
 
+    frame.reserve(nFrames);
+
     for (int i = 0; i < nFrames; i++) {
         
         str2 = std::to_string((pos++ + 1));
         url = str1 + str2 + str3;
         texture.loadFromFile(url);
-        frame[i] = texture;
+        frame.emplace_back(texture);
     }
 }
 
+/*PlayerAnimation::~PlayerAnimation()
+{
+}
+
+PlayerAnimation& PlayerAnimation::operator=(const PlayerAnimation& source)
+{
+    delete[] frame;
+    frame = nullptr;
+
+    frame = new sf::Texture[source.nFrames];
+    nFrames = source.nFrames;
+
+    for (int i = 0; i < nFrames; i++) {
+        frame[i] = source.frame[i];
+    }
+    return *this;
+}*/
+
 void PlayerAnimation::ApplyToSprite(sf::Sprite& s)
 {
-    //texture.loadFromFile(frames[iFrame]);
-    //s.setTexture(texture);
+    if (!isTextureUpdated) { 
+        return; 
+    }
+    isTextureUpdated = false;
     s.setTexture(frame[iFrame]);
     s.setOrigin({ s.getLocalBounds().width / 2, 0 });
 
@@ -56,6 +78,7 @@ void PlayerAnimation::Update(float dt)
     while (time >= holdTime) {
         time -= holdTime;
         Advance();
+        isTextureUpdated = true;
     }
 }
 

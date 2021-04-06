@@ -36,7 +36,7 @@ private:
     sf::Vector2f pos;
     sf::Vector2f vel = { 0.0f, 0.0f };
     sf::Sprite sprite;
-    PlayerAnimation animations[int(AnimationIndex::Count)];
+    PlayerAnimation animations[int(AnimationIndex::Count)] = {};
     AnimationIndex curAnimation = AnimationIndex::Idle;
     AnimationIndex lastAnimation = AnimationIndex::Idle;
 };
