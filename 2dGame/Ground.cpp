@@ -4,10 +4,11 @@ Ground::Ground(const sf::Vector2f& pos, const sf::Vector2f& scaleFactor)
     :
     pos(pos)
 {
-    texture.loadFromFile("sprite/grassBlock.jpg");
+    texture.loadFromFile("sprite/grassBlock2.png");
+    texture.setRepeated(true);
     sprite.setTexture(texture);
     sprite.setPosition(pos.x, pos.y);
-    sprite.setTextureRect(sf::IntRect(0, 0, sprite.getLocalBounds().width * scaleFactor.x, sprite.getLocalBounds().height * scaleFactor.y));
+    sprite.setTextureRect(sf::IntRect(0, 0,(100 * scaleFactor.x), (100 * scaleFactor.y)));
     size = sprite.getLocalBounds();
 }
 

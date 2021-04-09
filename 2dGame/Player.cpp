@@ -155,7 +155,7 @@ bool Player::TestCollision(const  sf::FloatRect& size_in, const sf::Vector2f& po
     sf::FloatRect vec = sprite.getGlobalBounds();
     vec;
 
-    if (pos.y + vec.height >= pos_in.y && pos.x <= pos_in.x + size_in.width && pos.x + vec.width >= pos_in.x)
+    if (pos.y + vec.height >= pos_in.y && pos.x <= pos_in.x + size_in.width && pos.x >= pos_in.x)
     {
         if (!jump)
         {
