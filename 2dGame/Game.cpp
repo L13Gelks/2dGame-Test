@@ -8,8 +8,11 @@ Game::Game()
 void Game::startGame()
 {
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(screenHeight, screenWidth), "SFML window");
+    sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "SFML window");
     Player fucker({ 200.0f,180.0f });
+    sf::Vector2f vec1 = { 0,660 };
+    sf::Vector2f vec2 = { 1,0.2f };
+    Ground ground(vec1,vec2);
     //dt
     auto tp = std::chrono::steady_clock::now();
     // Start the game loop
@@ -47,13 +50,17 @@ void Game::startGame()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
             fucker.SetJumping(true);
         }
+        
+
         fucker.SetDirection(dir);
         //update model
         fucker.Update(dt);
+        fucker.TestCollision(ground.GetSize(),ground.GetPosition());
         // Clear screen
         window.clear();
         // Draw the sprite
         fucker.Draw(window);
+        ground.Draw(window);
         // Update the window
         window.display();
     }
