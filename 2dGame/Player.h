@@ -9,7 +9,9 @@ public:
     bool IsShiftPressed() const;
     void SetJumping(bool jumping);
     void SetShiftPressed(bool shiftp);
-    bool TestCollision(const sf::FloatRect& size, const sf::Vector2f& pos);
+    bool TestCollision(const sf::FloatRect& size, const sf::Vector2f& pos, int type);
+    void setHurtState(bool state);
+    bool isHurting();
 private:
     enum class AnimationIndex
     {
@@ -25,16 +27,16 @@ private:
         Count
     };
 private:
-    int jump_time = (68);
-    int time = 0;
+    bool jump = false;
+    bool validJump = false;
+    bool falling = true;
+    float jumpSpeed = 0.0f;
+    bool hurt = false;
     bool faceDir = 0;
     bool walking = false;
     bool running = false;
     bool shiftPressed = false;
     bool shift = false;
-    bool jump = false;
-    bool lockX = false;
-    bool lockY = false;
     float speed = 0.0f;
     sf::Vector2f pos;
     sf::FloatRect size;

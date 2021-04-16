@@ -12,6 +12,7 @@ class Game
 {
 public:
 	Game();
+	~Game();
 	void startGame();
 private:
 	static constexpr int screenHeight = 760;
