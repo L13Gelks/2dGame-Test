@@ -4,15 +4,16 @@ Player::Player(const sf::Vector2f& pos)
     :
     pos(pos)
 {
-    sprite.setScale(0.2, 0.2);
+    //SIZE OF SPRITE 416x454 SCALED TO x0.2 = 83.2x90.8
+    sprite.setScale(0.2f, 0.2f);
+    //WAIFU SIZE 1,6m so 1,6m = 90px
     animations[int(AnimationIndex::Idle)] = PlayerAnimation(0, 16, "sprite/Idle (", "1", ").png");
     animations[int(AnimationIndex::WalkingRight)] = PlayerAnimation(1, 20, "sprite/Walk (", "1", ").png");
     animations[int(AnimationIndex::WalkingLeft)] = PlayerAnimation(2, 20, "sprite/Walk (", "1", ").png");
     animations[int(AnimationIndex::RunRight)] = PlayerAnimation(1, 20, "sprite/Run (", "1", ").png");
     animations[int(AnimationIndex::RunLeft)] = PlayerAnimation(2, 20, "sprite/Run (", "1", ").png");
-    animations[int(AnimationIndex::JumpUp)] = PlayerAnimation(3, 20, "sprite/Jump (", "1", ").png");
+    animations[int(AnimationIndex::JumpUp)] = PlayerAnimation(3, 12, "sprite/Jump (", "1", ").png");
     animations[int(AnimationIndex::JumpDown)] = PlayerAnimation(4, 6, "sprite/Jump (", "21", ").png");
-    //sprite.setTextureRect(sf::IntRect(0,0,416,454));
 }
 
 void Player::Draw(sf::RenderTarget& rt) const
@@ -22,89 +23,95 @@ void Player::Draw(sf::RenderTarget& rt) const
 
 void Player::SetDirection(sf::Vector2f& dir)
 {
-    if (jump) {
-
-        time += 1;
-        if (time < jump_time / 2) { dir.y -= 1; }
-        else { dir.y += 1; }
-
-        if (!walking && !running && !shiftPressed) {
-            if (faceDir) { dir.x = -0.2f; }
-            else { dir.x = 0.2f; }
-            dir.y *= 0.5f;
-        }
-        else if (walking && !shiftPressed) {
-            if (faceDir) { dir.x = -0.4f; }
-            else { dir.x = 0.4f; }
-            dir.y *= 0.6f;
-        }
-        else if (running || shiftPressed) {
-            if (faceDir) { dir.x = -1.4f; }
-            else { dir.x = 1.4f; }
-            dir.y *= 0.8f;
-        }
-
-        if (time > jump_time) {
-            jump = false;
-            time = 0;
-            vel.y = 0;
-        }
-    }
-
+    //SETTING SPEED FOR WALKING OR RUNNING STATE
     if (shift || shiftPressed)
     {
-        speed = 150.0f;
+        //180px/s = 3,2 m/s
+        speed = 180.0f;
     }
     else {
-        speed = 70.0f;
+        //90px/s = 1,6 m/s
+        speed = 90.0f;
     }
 
-    //Set Movement
- 
-    if (!jump && !lockY) {
-        dir.y += 2;
+    //SETTING SPEED FOR JUMPING STATE
+    if (jump && validJump) {
+        if (speed == 180.0f)
+        {
+            jumpSpeed = -80.0f * 4;
+        }
+        else if (speed == 90.0f) 
+        {
+            jumpSpeed = -80.0f * 3;
+        }
     }
-    if (dir.y < 0) {
-        curAnimation = AnimationIndex::JumpUp;
+    //SETTING SPEED FOR FALLING STATE
+    else if (!jump || !validJump)
+    {
+        if (!falling) {
+            //STOP FALLING SPEED IF ON GROUND
+            jumpSpeed = 0.0f;
+        }
+        else
+        {
+            //INCREASE SPEED GRADUALLY UP T0 9,6m/s or 540px/s
+            jumpSpeed += 540.0f / 60.0f;
+            if (jumpSpeed >= 540.0f) {
+                jumpSpeed = 540.0f;
+            }
+        }
+
     }
-    else if (dir.y > 0) {
-        curAnimation = AnimationIndex::JumpDown;
-    }
-    else if (!jump && dir.x == 0.0f && dir.y == 0.0f) {
-        curAnimation = AnimationIndex::Idle;
-        walking = false;
-        running = false;
-    }
-    else if (!jump && dir.x > 0 && shift) {
-        running = true;
-        faceDir = 0;
-        curAnimation = AnimationIndex::RunRight;
-    }
-    else if (!jump && dir.x < 0 && shift) {
-        running = true;
-        faceDir = 1;
-        curAnimation = AnimationIndex::RunLeft;
-    }
-    else if (!jump && dir.x > 0) {
-        walking = true;
-        faceDir = 0;
-        curAnimation = AnimationIndex::WalkingRight;
-    }
-    else if (!jump && dir.x < 0) {
-        walking = true;
-        faceDir = 1;
-        curAnimation = AnimationIndex::WalkingLeft;
-    }
-    vel = dir * speed;
+
+    //ADDING SPEED MULTIPLIERS TO VELOCITY
+    dir.x *= speed;
+    dir.y *= jumpSpeed;
+    vel = dir;
+
+    //SMART STUFF
+    falling = true;
+    validJump = false;
 }
 
 void Player::Update(float dt)
 {
-    if (lockX) { vel.x = 0; }
-    if (lockY) { vel.y = 0; }
-    lockX = false; lockY = false;
-
+    //UPDATING POS
     pos += vel * dt;
+    
+    //SETTING CURRENT ANIMATION
+    if (vel.y < 0) {
+        curAnimation = AnimationIndex::JumpUp;
+    }
+    else if (vel.y > 0) {
+        curAnimation = AnimationIndex::JumpDown;
+    }
+    else if (vel.x == 0.0f && vel.y == 0.0f) {
+        curAnimation = AnimationIndex::Idle;
+        walking = false;
+        running = false;
+    }
+    else if (vel.x > 0 && shift) {
+        running = true;
+        faceDir = 0;
+        curAnimation = AnimationIndex::RunRight;
+    }
+    else if (vel.x < 0 && shift) {
+        running = true;
+        faceDir = 1;
+        curAnimation = AnimationIndex::RunLeft;
+    }
+    else if (vel.x > 0) {
+        walking = true;
+        faceDir = 0;
+        curAnimation = AnimationIndex::WalkingRight;
+    }
+    else if (vel.x < 0) {
+        walking = true;
+        faceDir = 1;
+        curAnimation = AnimationIndex::WalkingLeft;
+    }
+
+    //CHECKING IF BY THE TIME OF JUMP SHIFT WAS PRESSED
     if (lastAnimation != curAnimation) {
         if (curAnimation == AnimationIndex::JumpUp && lastAnimation ==AnimationIndex::RunRight ||
             curAnimation == AnimationIndex::JumpUp && lastAnimation == AnimationIndex::RunLeft) 
@@ -115,18 +122,20 @@ void Player::Update(float dt)
         lastAnimation = curAnimation;
     }
 
+    //CHECKING IF JUMP UP OR JUMP DOWN ANIMATION MUST BE USED
     if (curAnimation == AnimationIndex::JumpUp && animations[int(curAnimation)].isLastFrame() ||
         curAnimation == AnimationIndex::JumpDown && animations[int(curAnimation)].isLastFrame()) 
     {}
     else 
     { 
         animations[int(curAnimation)].Update(dt); 
+        //SETTING SHIFT STATE TO FALSE WHEN JUMP ANIAMTION ENDS
         if (curAnimation != AnimationIndex::JumpUp && curAnimation != AnimationIndex::JumpDown) { shiftPressed = false; }
     }
-
+    //SETTING FINAL POSITION TO SPRITE
     sprite.setPosition(pos);
+    //ADDING ANIMATION TO SPRYTE
     animations[int(curAnimation)].ApplyToSprite(sprite);
-
 }
 
 bool Player::IsJumping() const
@@ -149,35 +158,70 @@ void Player::SetShiftPressed(bool shiftp)
     shiftPressed = shiftp;
 }
 
-bool Player::TestCollision(const  sf::FloatRect& size_in, const sf::Vector2f& pos_in)
+bool Player::TestCollision(const  sf::FloatRect& size_in, const sf::Vector2f& pos_in, int type)
 {
-
     sf::FloatRect vec = sprite.getGlobalBounds();
-    vec;
 
-    if (pos.y + vec.height >= pos_in.y && pos.x <= pos_in.x + size_in.width && pos.x >= pos_in.x)
+    //IF BACKGROUND GET OUT OF HERE BUDDY
+    if (type == 2)
     {
-        if (!jump)
-        {
-            lockY = true;
-        }
- 
-        if (pos.y + vec.height > pos_in.y)
-        {
-            pos.y = pos_in.y - vec.height;
-            sprite.setPosition(pos);
-        }
-    }
-    else 
-    {
-        if (pos.y + vec.height > pos_in.y && pos.x >= pos_in.x + size_in.width ||
-            pos.y + vec.height > pos_in.y && pos.x + vec.width <= pos_in.x)
-        {
-            lockX = true;
-        }
+        return 0;
     }
 
+    //ASSUMING PLAYER MUST BE ON TOP OF GROUND...
+    float newPos = pos_in.y - vec.height + 1;
+
+    if (pos.y + vec.height >= pos_in.y)
+    {
+        if (pos.x <= pos_in.x + size_in.width && pos.x >= pos_in.x) {
+            //IF ON GROUND NOW YOU CAN JUMP AND STOP GOING DOWN 
+            validJump = true;
+            falling = false;
+
+            //ASSUMING PLAYER MUST NOT AUTO-JUMP ON TILES IF CERTAIN HEIGHT...
+            if (pos.y + vec.height > pos_in.y + size_in.height / 8)
+            {
+                if (pos.x + vec.width / 2 >= pos_in.x && pos.x - vec.width / 2 <= pos_in.x ) {
+                    pos.x = pos_in.x - 2;
+                }
+                else if (pos.x <= pos_in.x + size_in.width && pos.x + vec.width/2 >= pos_in.x + size_in.width)
+                {
+                    pos.x = pos_in.x + size_in.width + 2;
+                }
+
+                //ASSUMING PLAYER MUST NOT BE ON TOP OF GROUND...
+                newPos = pos.y;
+
+                //SETTING THESE VALUES IF LATERAL COLISSION OCCURS
+                validJump = false;
+                falling = true;
+            }
+
+            //SETTING THE CORRECT POSTION BASED ON WHATEVER
+            pos.y = newPos;
+
+            //IF DANGEROUS GROUND GG
+            if (type == 1) { hurt = true; }
+        }
+    }
+    //SETTING POS IF COLISSION WAS DETECTED
+    sprite.setPosition(pos);
+    //IF IT HURTS CHANGED COLOR TO SOMETHING REDDISH IF NOT THEN WHATEVER
+    if (hurt == true) { sprite.setColor(sf::Color(255, 100, 100)); }
+    else { sprite.setColor(sf::Color(255, 255, 255)); }
+
+    //WHY
     return false;
+}
+
+void Player::setHurtState(bool state)
+{
+    hurt = state;
+}
+
+bool Player::isHurting()
+{
+    return hurt;
 }
 
 

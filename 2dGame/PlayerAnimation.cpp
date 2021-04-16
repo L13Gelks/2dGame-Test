@@ -59,12 +59,11 @@ void PlayerAnimation::ApplyToSprite(sf::Sprite& s)
 
     if (value == 2) {
         //left
-
-        s.setScale({ -0.2, 0.2 });
+        s.setScale({ -0.2f, 0.2f });
     }
     else if (value == 1) {
         //right
-        s.setScale({ 0.2, 0.2 });
+        s.setScale({ 0.2f, 0.2f });
 
     }
     else {
