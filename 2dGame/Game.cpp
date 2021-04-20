@@ -94,20 +94,21 @@ void Game::startGame()
         
    
         //handle input
+        float x = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
         sf::Vector2f dir = { 0.0f,1.0f };
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) || x < -10.f) {
             dir.x -= 1.0f;
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) || x > 10.f) {
             dir.x += 1.0f;
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) || sf::Joystick::isButtonPressed(0, 5)) {
             fucker.SetShiftPressed(true);
         }
         else if (!fucker.IsJumping()) {
             fucker.SetShiftPressed(false);
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) || sf::Joystick::isButtonPressed(0, 1)) {
             fucker.SetJumping(true);
         }
         else 
@@ -148,3 +149,6 @@ void Game::startGame()
         traveledDistance += worldTravelSpeed;
     }
 }
+
+//Control buttons
+//1 = X, 2 = O, 3 = triangle, 4 = square
