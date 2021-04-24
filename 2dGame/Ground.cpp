@@ -3,7 +3,8 @@
 Ground::Ground(int type, const sf::Vector2f& pos, const sf::Vector2f& scaleFactor)
     :
     pos(pos),
-    type(type)
+    type(type),
+    scaleFactor(scaleFactor)
 {
     if (type == int(GroundType::Ground)) 
     {
@@ -24,11 +25,39 @@ Ground::Ground(int type, const sf::Vector2f& pos, const sf::Vector2f& scaleFacto
     }
 
     texture.setRepeated(true);
-    //texture.setSmooth(true);
     sprite.setTexture(texture);
     sprite.setPosition(pos.x, pos.y);
 
     size = sprite.getLocalBounds();
+}
+
+Ground::Ground(const Ground& source)
+    :
+    type(source.type),
+    groundFlowTime(source.groundFlowTime),
+    texture(source.texture),
+    vel(source.vel),
+    pos(source.pos),
+    size(source.size),
+    scaleFactor(source.scaleFactor)
+{
+    if (type == int(GroundType::Ground))
+    {
+        vel = { 0.0f, 0.0f };
+        sprite.setTextureRect(sf::IntRect(0, 0, (int)(100 * scaleFactor.x), (int)(100 * scaleFactor.y)));
+    }
+    else if (type == int(GroundType::Water))
+    {
+        vel = { -0.01f, -0.01f };
+        sprite.setTextureRect(sf::IntRect(0, 0, (int)(100 * scaleFactor.x), (int)(100 * scaleFactor.y)));
+    }
+    else if (type == int(GroundType::Background))
+    {
+        vel = { 0.0f, 0.0f };
+        sprite.setTextureRect(sf::IntRect(0, 100, (int)(1360 * scaleFactor.x), (int)(720 * scaleFactor.y)));
+    }
+
+    sprite.setTexture(texture);
 }
 
 void Ground::Draw(sf::RenderTarget& rt) const
@@ -57,14 +86,14 @@ void Ground::SetDirection()
 
 void Ground::Update(float dt)
 {
-    if (type == int(GroundType::Ground))
-    {
-        pos += vel * dt;
-        sprite.setPosition(pos);
-    }
-    else if (type == int(GroundType::Water))
+    if (type == int(GroundType::Water))
     {
         groundFlowTime += dt;
+        sprite.setPosition(pos);
+    }
+    else
+    {
+        pos += vel * dt;
         sprite.setPosition(pos);
     }
 }
