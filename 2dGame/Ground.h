@@ -1,5 +1,19 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <memory>
+#include <unordered_map>
+#include <string>
+
+class TextureCodex
+{
+public:
+	static std::shared_ptr<sf::Texture> Acquire(const std::string& name);
+	static void Clean();
+private:
+	static std::unordered_map<std::string, std::shared_ptr<sf::Texture>> textures;
+};
+
+
 class Ground
 {
 public:
@@ -21,7 +35,7 @@ private:
 private:
 	int type = 0;
 	float groundFlowTime = 0.0f;
-	sf::Texture texture;
+	std::shared_ptr<sf::Texture> pTexture;
 	sf::Sprite sprite;
 	sf::Vector2f vel = { 0.0f, 0.0f };
 	sf::Vector2f pos;

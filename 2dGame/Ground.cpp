@@ -8,24 +8,24 @@ Ground::Ground(int type, const sf::Vector2f& pos, const sf::Vector2f& scaleFacto
 {
     if (type == int(GroundType::Ground)) 
     {
-        texture.loadFromFile("sprite/grassBlock2.png");
+        pTexture = TextureCodex::Acquire("sprite/grassBlock2.png");
         vel = { 0.0f, 0.0f };
         sprite.setTextureRect(sf::IntRect(0, 0, (int)(100 * scaleFactor.x), (int)(100 * scaleFactor.y)));
     }
     else if (type == int(GroundType::Water))
     {
-        texture.loadFromFile("sprite/waterTexture1.png");
+        pTexture = TextureCodex::Acquire("sprite/waterTexture1.png");
         vel = { -0.01f, -0.01f };
         sprite.setTextureRect(sf::IntRect(0, 0, (int)(100 * scaleFactor.x), (int)(100 * scaleFactor.y)));
     }
     else if (type == int(GroundType::Background))
     {
-        texture.loadFromFile("sprite/firstLevelBackground.jpg");
+        pTexture = TextureCodex::Acquire("sprite/firstLevelBackground.jpg");
         sprite.setTextureRect(sf::IntRect(0, 100, (int)(1360 * scaleFactor.x), (int)(720 * scaleFactor.y)));
     }
 
-    texture.setRepeated(true);
-    sprite.setTexture(texture);
+    pTexture->setRepeated(true);
+    sprite.setTexture(*pTexture);
     sprite.setPosition(pos.x, pos.y);
 
     size = sprite.getLocalBounds();
@@ -35,7 +35,7 @@ Ground::Ground(const Ground& source)
     :
     type(source.type),
     groundFlowTime(source.groundFlowTime),
-    texture(source.texture),
+    pTexture(source.pTexture),
     vel(source.vel),
     pos(source.pos),
     size(source.size),
@@ -57,7 +57,7 @@ Ground::Ground(const Ground& source)
         sprite.setTextureRect(sf::IntRect(0, 100, (int)(1360 * scaleFactor.x), (int)(720 * scaleFactor.y)));
     }
 
-    sprite.setTexture(texture);
+    sprite.setTexture(*pTexture);
 }
 
 void Ground::Draw(sf::RenderTarget& rt) const
@@ -111,4 +111,37 @@ sf::FloatRect Ground::GetSize()
 int Ground::getType()
 {
     return type;
+}
+
+std::unordered_map<std::string, std::shared_ptr<sf::Texture>> TextureCodex::textures;
+
+std::shared_ptr<sf::Texture> TextureCodex::Acquire(const std::string& name)
+{
+    const auto i = textures.find(name);
+    if (i != textures.end())
+    {
+        return i->second;
+    }
+    else
+    {
+        auto pTexture = std::make_shared<sf::Texture>();
+        pTexture->loadFromFile(name);
+        textures.insert({ name,pTexture });
+        return pTexture;
+    }
+}
+
+void TextureCodex::Clean()
+{
+      for (auto i = textures.begin(); i != textures.end();)
+     {
+         if (i->second.unique())
+         {
+             i = textures.erase(i);
+         }
+         else
+         {
+             ++i;
+         }
+     }
 }
