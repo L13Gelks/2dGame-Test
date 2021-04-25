@@ -56,19 +56,6 @@ void PlayerAnimation::ApplyToSprite(sf::Sprite& s)
     isTextureUpdated = false;
     s.setTexture(frame[iFrame]);
     s.setOrigin({ s.getLocalBounds().width / 2, 0 });
-
-    if (value == 2) {
-        //left
-        s.setScale({ -0.2f, 0.2f });
-    }
-    else if (value == 1) {
-        //right
-        s.setScale({ 0.2f, 0.2f });
-
-    }
-    else {
-
-    }
 }
 
 void PlayerAnimation::Update(float dt)

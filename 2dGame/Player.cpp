@@ -8,10 +8,8 @@ Player::Player(const sf::Vector2f& pos)
     sprite.setScale(0.2f, 0.2f);
     //WAIFU SIZE 1,6m so 1,6m = 90px
     animations[int(AnimationIndex::Idle)] = PlayerAnimation(0, 16, "sprite/Idle (", "1", ").png");
-    animations[int(AnimationIndex::WalkingRight)] = PlayerAnimation(1, 20, "sprite/Walk (", "1", ").png");
-    animations[int(AnimationIndex::WalkingLeft)] = PlayerAnimation(2, 20, "sprite/Walk (", "1", ").png");
-    animations[int(AnimationIndex::RunRight)] = PlayerAnimation(1, 20, "sprite/Run (", "1", ").png");
-    animations[int(AnimationIndex::RunLeft)] = PlayerAnimation(2, 20, "sprite/Run (", "1", ").png");
+    animations[int(AnimationIndex::Walking)] = PlayerAnimation(1, 20, "sprite/Walk (", "1", ").png");
+    animations[int(AnimationIndex::Run)] = PlayerAnimation(1, 20, "sprite/Run (", "1", ").png");
     animations[int(AnimationIndex::JumpUp)] = PlayerAnimation(3, 12, "sprite/Jump (", "1", ").png");
     animations[int(AnimationIndex::JumpDown)] = PlayerAnimation(4, 6, "sprite/Jump (", "21", ").png");
 }
@@ -90,31 +88,45 @@ void Player::Update(float dt)
         walking = false;
         running = false;
     }
-    else if (vel.x > 0 && shift) {
-        running = true;
-        faceDir = 0;
-        curAnimation = AnimationIndex::RunRight;
-    }
-    else if (vel.x < 0 && shift) {
-        running = true;
-        faceDir = 1;
-        curAnimation = AnimationIndex::RunLeft;
-    }
     else if (vel.x > 0) {
-        walking = true;
-        faceDir = 0;
-        curAnimation = AnimationIndex::WalkingRight;
+        if (!shift)
+        {
+            walking = true;
+            faceDir = 0;
+            curAnimation = AnimationIndex::Walking;
+        }
+        else
+        {
+            running = true;
+            faceDir = 0;
+            curAnimation = AnimationIndex::Run;
+        }
     }
     else if (vel.x < 0) {
-        walking = true;
-        faceDir = 1;
-        curAnimation = AnimationIndex::WalkingLeft;
+        if (!shift)
+        {
+            walking = true;
+            faceDir = 1;
+            curAnimation = AnimationIndex::Walking;
+        }
+        else
+        {
+            running = true;
+            faceDir = 1;
+            curAnimation = AnimationIndex::Run;
+        }
     }
-
+    if (vel.x < 0)
+    {
+        sprite.setScale({ -0.2f, 0.2f });
+    }
+    else if (vel.x > 0)
+    {
+        sprite.setScale({ 0.2f, 0.2f });
+    }
     //CHECKING IF BY THE TIME OF JUMP SHIFT WAS PRESSED
     if (lastAnimation != curAnimation) {
-        if (curAnimation == AnimationIndex::JumpUp && lastAnimation ==AnimationIndex::RunRight ||
-            curAnimation == AnimationIndex::JumpUp && lastAnimation == AnimationIndex::RunLeft) 
+        if (curAnimation == AnimationIndex::JumpUp && lastAnimation ==AnimationIndex::Run) 
         { 
             shiftPressed = true; 
         }

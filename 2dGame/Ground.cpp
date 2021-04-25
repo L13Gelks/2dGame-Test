@@ -15,7 +15,7 @@ Ground::Ground(int type, const sf::Vector2f& pos, const sf::Vector2f& scaleFacto
     else if (type == int(GroundType::Water))
     {
         pTexture = TextureCodex::Acquire("sprite/waterTexture1.png");
-        vel = { -0.01f, -0.01f };
+        vel = { -0.1f, -0.1f };
         sprite.setTextureRect(sf::IntRect(0, 0, (int)(100 * scaleFactor.x), (int)(100 * scaleFactor.y)));
     }
     else if (type == int(GroundType::Background))
@@ -48,7 +48,7 @@ Ground::Ground(const Ground& source)
     }
     else if (type == int(GroundType::Water))
     {
-        vel = { -0.01f, -0.01f };
+        vel = { -0.1f, -0.1f };
         sprite.setTextureRect(sf::IntRect(0, 0, (int)(100 * scaleFactor.x), (int)(100 * scaleFactor.y)));
     }
     else if (type == int(GroundType::Background))
@@ -70,13 +70,13 @@ void Ground::SetDirection()
     if (type == int(GroundType::Water)) {
         if (pos.y >= 760 - size.height/1.5)
         {
-            vel.y = -0.005f;
+            vel.y = -0.1f;
         }
-        else if (pos.y <= 680)
+        else if (pos.y <= 670)
         {
-            vel.y = 0.005f;
+            vel.y = 0.1f;
         }
-        if (groundFlowTime >= 1.5f) {
+        if (groundFlowTime >= 5.0f) {
             groundFlowTime = 0.0f;
             vel.x = -vel.x;
         }
