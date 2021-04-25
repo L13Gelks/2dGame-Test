@@ -16,12 +16,8 @@ private:
     enum class AnimationIndex
     {
         Idle,
-        WalkingRight,
-        WalkingLeft,
-        RunUp,
-        RunDown,
-        RunRight,
-        RunLeft,
+        Walking,
+        Run,
         JumpUp,
         JumpDown,
         Count

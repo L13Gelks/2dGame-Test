@@ -19,6 +19,7 @@ class Ground
 public:
 	Ground(int type, const sf::Vector2f& pos, const sf::Vector2f& scaleFactor);
 	Ground(const Ground& source);
+	Ground& operator=(const Ground&) = delete;
 	void Draw(sf::RenderTarget& rt)const;
 	void SetDirection();
 	void Update(float dt);
