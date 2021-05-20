@@ -7,6 +7,7 @@
 #include <chrono>
 #include "Player.h"
 #include "Ground.h"
+#include "Enemy.h"
 #include <vector>
 #include <random>
 
@@ -17,6 +18,8 @@ public:
 	~Game();
 	void WorldCreator();
 	void startGame();
+	int TestCollision(const sf::FloatRect& obj_size1, const sf::Vector2f& obj_pos1, 
+		const sf::FloatRect& obj_size2, const sf::Vector2f& obj_pos2);
 private:
 	float worldDistance = 58500.0f;
 	float traveledDistance = 0.0f;
@@ -25,6 +28,7 @@ private:
 	float travelGroundLastCheckPoint = 0.0f;
 	int bottomGroundIndex = 0;
 	std::vector<Ground> ground;
+	std::vector<Enemy> enemy;
 	static constexpr int screenHeight = 760;
 	static constexpr int screenWidth = 1360;
 };

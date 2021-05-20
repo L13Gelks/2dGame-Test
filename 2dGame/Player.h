@@ -11,7 +11,14 @@ public:
     void SetShiftPressed(bool shiftp);
     bool TestCollision(const sf::FloatRect& size, const sf::Vector2f& pos, int type);
     void setHurtState(bool state);
+    void SetGuard(bool state);
     bool isHurting();
+    sf::Vector2f GetPosition();
+    sf::FloatRect GetSize();
+    int getType();
+    void setPosition(sf::Vector2f& newPos);
+    bool validJump = false;
+    bool falling = true;
 private:
     enum class AnimationIndex
     {
@@ -20,12 +27,12 @@ private:
         Run,
         JumpUp,
         JumpDown,
+        Guard,
         Count
     };
 private:
     bool jump = false;
-    bool validJump = false;
-    bool falling = true;
+    bool guard = false;
     float jumpSpeed = 0.0f;
     bool hurt = false;
     bool faceDir = 0;

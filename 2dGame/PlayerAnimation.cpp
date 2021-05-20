@@ -7,8 +7,15 @@ PlayerAnimation::PlayerAnimation(int value_in, int frames_in, std::string str_1,
         //Normal animation time
         holdTime = 0.05f;
     }
-    else  { holdTime = 0.08f; } //Jump animation time
-
+    else { if (value == 3) { holdTime = 0.04f; }
+    else { holdTime = 0.08f; }
+    } //Jump animation time
+    if (value == 2) {
+        holdTime = 0.05f;
+    }
+    if (value == 5) {
+        holdTime = 0.12f;
+    }
     str1 = str_1;
     str2 = str_2;
     str3 = str_3;
@@ -17,7 +24,7 @@ PlayerAnimation::PlayerAnimation(int value_in, int frames_in, std::string str_1,
 
     int pos = 0;
     if (value_in != 4) { pos = 0; }
-    else { pos = 15; }
+    else if(value_in == 4){ pos = 13; }
 
     frame.reserve(nFrames);
 
