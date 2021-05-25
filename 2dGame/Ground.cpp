@@ -8,7 +8,7 @@ Ground::Ground(int type, const sf::Vector2f& pos, const sf::Vector2f& scaleFacto
 {
     if (type == int(GroundType::Ground)) 
     {
-        pTexture = TextureCodex::Acquire("sprite/grassBlock2.png");
+        pTexture = TextureCodex::Acquire("sprite/grounds/grassBlock2.png");
         vel = { 0.0f, 0.0f };
         sprite.setTextureRect(sf::IntRect(0, 0, (int)(100 * scaleFactor.x), (int)(100 * scaleFactor.y)));
     }
@@ -20,15 +20,15 @@ Ground::Ground(int type, const sf::Vector2f& pos, const sf::Vector2f& scaleFacto
     }
     else if (type == int(GroundType::Background))
     {
-        pTexture = TextureCodex::Acquire("sprite/firstLevelBackground.jpg");
-        sprite.setTextureRect(sf::IntRect(0, 100, (int)(1360 * scaleFactor.x), (int)(720 * scaleFactor.y)));
+        pTexture = TextureCodex::Acquire("sprite/forest_dark.jpg");
+        sprite.setTextureRect(sf::IntRect(0, 400, (int)(1360 * scaleFactor.x), (int)(720 * scaleFactor.y)));
     }
 
     pTexture->setRepeated(true);
     sprite.setTexture(*pTexture);
     sprite.setPosition(pos.x, pos.y);
 
-    size = sprite.getLocalBounds();
+    size = sprite.getGlobalBounds();
 }
 
 Ground::Ground(const Ground& source)
@@ -111,6 +111,36 @@ sf::FloatRect Ground::GetSize()
 int Ground::getType()
 {
     return type;
+}
+
+void Ground::setTileStart(float in)
+{
+    tileStart = in;
+}
+
+float Ground::getTileStart()
+{
+    return tileStart;
+}
+
+void Ground::setTileEnd(float in)
+{
+    tileEnd = in;
+}
+
+float Ground::getTileEnd()
+{
+    return tileEnd;
+}
+
+void Ground::setTileLength(float in)
+{
+    tileLength = in;
+}
+
+float Ground::getTileLength()
+{
+    return tileLength;
 }
 
 std::unordered_map<std::string, std::shared_ptr<sf::Texture>> TextureCodex::textures;

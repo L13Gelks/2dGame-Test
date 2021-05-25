@@ -16,6 +16,7 @@ void Game::WorldCreator()
     float groundMult = 0.0f;
     ground.reserve(50);
     if (traveledDistance == 0.0f) {
+        traveledDistance += 0.1f;
         vec1 = { 0,0 };
         vec2 = { 9.0f,1.0f };
         ground.emplace_back(2, vec1, vec2);
@@ -26,16 +27,30 @@ void Game::WorldCreator()
         vec2 = { 14.0f,1.0f };
         groundMult = 14.0f;
         ground.emplace_back(0, vec1, vec2);
+        //
+        ground.at(ground.size()-1).setTileStart(travelGroundCheckPoint);
+        ground.at(ground.size()-1).setTileEnd(groundMult * 100);
+        ground.at(ground.size()-1).setTileLength(groundMult * 100);
+        //
         travelGroundCheckPoint = groundMult * 100;
         bottomGroundIndex = 2;
+        vec1 = { 500,550 };
+        vec2 = { 0.05f, 0.05f };
+        PelotaMiedo* e = new PelotaMiedo(0,1, vec1, vec2);
+        enemy.push_back(e);
+        vec1 = { 500,350 };
+        vec2 = { 0.3f,0.3f };
+        Slime* a = new Slime(1, 1, vec1, vec2);
+        enemy.push_back(a);
     }
     else {
-        if (travelGroundCheckPoint == traveledDistance+screenWidth)
+        if (travelGroundCheckPoint >= traveledDistance+screenWidth-10 && travelGroundCheckPoint <= traveledDistance + screenWidth + 10)
         {
             std::random_device rd;
             std::mt19937 rng(rd());
             std::uniform_int_distribution<int> xDist(50, 200);
             std::uniform_int_distribution<int> xMult(1, 3);
+            //std::uniform_int_distribution<int> xMult(10, 300);
 
             groundMult = xMult(rng);
 
@@ -43,7 +58,7 @@ void Game::WorldCreator()
             vec2 = { groundMult,1.0f };
 
             ground.emplace_back(0, vec1, vec2);
-            travelGroundCheckPoint += groundMult * 100;
+            travelGroundCheckPoint += (float)groundMult * 100.0f;
             travelGroundCheckPoint += xDist(rng);
         }
     }
@@ -51,6 +66,23 @@ void Game::WorldCreator()
 
 void Game::startGame()
 {
+    sf::Font font;
+    if (!font.loadFromFile("Font/arial.ttf"))
+    {
+        // error...
+    }
+
+    // select the font
+    text.setFont(font); // font is a sf::Font
+
+    // set the string to display
+    text.setString("Hello world");
+
+    // set the character size
+    text.setCharacterSize(24); // in pixels, not points!
+
+    // set the color
+    text.setFillColor(sf::Color::Red);
     // Create the main window
     sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "Waifu Escape");
     auto image = sf::Image{};
@@ -69,6 +101,7 @@ void Game::startGame()
     window.setFramerateLimit(60);
     while (window.isOpen())
     {
+        playerPosX = fucker.GetPosition().x;
         WorldCreator();
         // get dt
         float dt;
@@ -115,7 +148,24 @@ void Game::startGame()
         {
             fucker.SetJumping(false);
         }
-        
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E) || sf::Joystick::isButtonPressed(0, 7)) {
+            dir.x = 0.0f;
+            if (!fucker.IsJumping())
+            {
+                fucker.SetGuard(true);
+            }
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) || sf::Joystick::isButtonPressed(0, 2)) {
+            dir.x = 0.0f;
+            if (!fucker.IsJumping())
+            {
+                fucker.atk = true;
+            }
+        }
+
+
         if (fucker.isHurting()) 
         {
             fucker.setHurtState(false);
@@ -128,27 +178,250 @@ void Game::startGame()
         fucker.Update(dt);
         // Clear screen
         window.clear();
-        view.move(worldTravelSpeed, 0.0f);
-        window.setView(view);
         // Draw the sprite
         ground[0].Draw(window);
         fucker.Draw(window);
-        for (int i = 0; i < ground.size(); i++)
+        for (int e = 0; e < enemy.size(); e++)
         {
-            ground[i].SetDirection();
-            fucker.TestCollision(ground[i].GetSize(), ground[i].GetPosition(), ground[i].getType());
-            ground[i].Update(dt);
-            if (i > 1)
+            enemy[e]->SetDirection();
+            int col = 0;
+            sf::Vector2f enemyPos = { enemy[e]->GetPosition().x - enemy[e]->GetSize().width/2,enemy[e]->GetPosition().y- enemy[e]->GetSize().height/2 };
+            if (e >= 0) { col = TestCollision(fucker.GetSize(), fucker.GetPosition(), enemy[e]->GetSize(),enemyPos); }
+            if (col != 0)
             {
-                ground[i].Draw(window);
+                sf::Vector2f newPos = fucker.GetPosition();
+                newPos.y = enemyPos.y - fucker.GetSize().height + 1;
+                fucker.validJump = true;
+                fucker.falling = false;
+                switch (col)
+                {
+                case 1:
+                    break;
+                case 2:
+                    fucker.validJump = false;
+                    fucker.falling = true;
+                    newPos.x = enemyPos.x + enemy[e]->GetSize().width + 2;
+                    newPos.y = fucker.GetPosition().y;
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    fucker.validJump = false;
+                    fucker.falling = true;
+                    newPos.x = enemyPos.x - 2;
+                    newPos.y = fucker.GetPosition().y;
+                    break;
+                default:
+                    break;
+                }
+                fucker.setPosition(newPos);
             }
+            //Enemy with world
+            for (int g = 0; g < ground.size(); g++)
+            {
+                ground[g].SetDirection();
+                int col = 0;
+                if (g != 0) { col = TestCollision(enemy[e]->GetSize(), enemy[e]->GetPosition(), ground[g].GetSize(), ground[g].GetPosition()); }
+
+                if (col != 0)
+                {
+                    sf::Vector2f newPos = enemy[e]->GetPosition();
+                    newPos.y = ground[g].GetPosition().y - enemy[e]->GetSize().height + 1;
+                    enemy[e]->validJump = true;
+                    enemy[e]->falling = false;
+                    //Slime behavior
+                    if (enemy[e]->enemyId == 1)
+                    {
+                        if (newPos.x - enemy[e]->GetSize().width >= ground[g].getTileEnd() - 20)
+                        {
+                           enemy[e]->rightCollision();
+                           newPos.x -= 20;
+                            //col = 999;
+                        }
+                        else if (newPos.x - enemy[e]->GetSize().width <= ground[g].getTileStart() + 20)
+                        {
+                            enemy[e]->leftCollision();
+                            newPos.x += 20;
+                        }
+                    }
+                    //
+                    switch (col)
+                    {
+                    case 1:
+                        break;
+                    case 2:
+                        newPos.x = ground[g].GetPosition().x + ground[g].GetSize().width + 5;
+                        newPos.y = enemy[e]->GetPosition().y;
+                        enemy[e]->leftCollision();
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        newPos.x = ground[g].GetPosition().x - 5;
+                        newPos.y = enemy[e]->GetPosition().y;
+                        enemy[e]->rightCollision();
+                        break;
+                    default:
+                        break;
+                    }
+                    enemy[e]->setPosition(newPos);
+                }
+                ground[g].Update(dt);
+                if (g > 1)
+                {
+                    ground[g].Draw(window);
+                }
+            }
+
+            enemy[e]->Update(dt);
+            enemy[e]->Draw(window);
+
+        }
+
+
+        //Player with world
+        for (int g = 0; g < ground.size(); g++)
+        {
+            ground[g].SetDirection();
+            int col = 0;
+            if (g != 0) { col = TestCollision(fucker.GetSize(), fucker.GetPosition(), ground[g].GetSize(), ground[g].GetPosition()); }
+            
+            if (col != 0)
+            {
+                sf::Vector2f newPos = fucker.GetPosition();
+                newPos.y = ground[g].GetPosition().y - fucker.GetSize().height + 1;
+                fucker.validJump = true;
+                fucker.falling = false;
+                switch (col)
+                {
+                case 1:
+                    break;
+                case 2:
+                    fucker.validJump = false;
+                    fucker.falling = true;
+                    newPos.x = ground[g].GetPosition().x + ground[g].GetSize().width + 2;
+                    newPos.y = fucker.GetPosition().y;
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    fucker.validJump = false;
+                    fucker.falling = true;
+                    newPos.x = ground[g].GetPosition().x - 2;
+                    newPos.y = fucker.GetPosition().y;
+                    break;
+                default:
+                    break;
+                }
+                fucker.setPosition(newPos);
+            }
+            ground[g].Update(dt);
+            if (g > 1)
+            {
+                ground[g].Draw(window);
+            }
+        }
+
+        playerLastPosX = fucker.GetPosition().x;
+        playerMoveX = playerLastPosX - playerPosX;
+
+        if (fucker.GetPosition().x >= 680)
+        {
+            view.move(playerMoveX, 0.0f);
+            window.setView(view);
         }
         ground[1].Draw(window);
         // Update the window
+        checkButton(window);
         window.display();
-        traveledDistance += worldTravelSpeed;
+        
+        traveledDistance += playerMoveX;
+
     }
 }
 
+int Game::TestCollision(const sf::FloatRect& obj_size1, const sf::Vector2f& obj_pos1, const sf::FloatRect& obj_size2, const sf::Vector2f& obj_pos2)
+{
+
+    if (obj_pos1.y + obj_size1.height >= obj_pos2.y && obj_pos1.y <= obj_pos2.y + obj_size2.height)
+    {
+        if (obj_pos1.x <= obj_pos2.x + obj_size2.width && obj_pos1.x >= obj_pos2.x) {
+            if (obj_pos1.y + obj_size1.height-5 > obj_pos2.y && obj_pos1.y < obj_pos2.y + obj_size2.height)
+            {
+                if (obj_pos1.x + obj_size1.width >= obj_pos2.x && obj_pos1.x - 15 <= obj_pos2.x) {
+                    return 4;
+                }
+                else if (obj_pos1.x <= obj_pos2.x + obj_size2.width && obj_pos1.x + obj_size1.width >= obj_pos2.x + obj_size2.width)
+                {
+                    return 2;
+                }
+            }
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void Game::checkButton(sf::RenderTarget& window)
+{
+    if (sf::Joystick::isButtonPressed(0, 0))
+    {
+        text.setString("Button 0");
+    }
+    if (sf::Joystick::isButtonPressed(0, 1))
+    {
+        text.setString("Button 1");
+    }
+    else if (sf::Joystick::isButtonPressed(0, 2))
+    {
+        text.setString("Button 2");
+    }
+    else if (sf::Joystick::isButtonPressed(0, 3))
+    {
+        text.setString("Button 3");
+    }
+    else if (sf::Joystick::isButtonPressed(0, 4))
+    {
+        text.setString("Button 4");
+    }
+    else if (sf::Joystick::isButtonPressed(0, 5))
+    {
+        text.setString("Button 5");
+    }
+    else if (sf::Joystick::isButtonPressed(0, 6))
+    {
+        text.setString("Button 6");
+    }
+    else if (sf::Joystick::isButtonPressed(0, 7))
+    {
+        text.setString("Button 7");
+    }
+    else if (sf::Joystick::isButtonPressed(0, 8))
+    {
+        text.setString("Button 8");
+    }
+    else if (sf::Joystick::isButtonPressed(0, 9))
+    {
+        text.setString("Button 9");
+    }
+    else if (sf::Joystick::isButtonPressed(0, 10))
+    {
+        text.setString("Button 10");
+    }
+    else if (sf::Joystick::isButtonPressed(0, 11))
+    {
+        text.setString("Button 11");
+    }
+    else if (sf::Joystick::isButtonPressed(0, 12))
+    {
+        text.setString("Button 12");
+    }
+    else if (sf::Joystick::isButtonPressed(0, 13))
+    {
+        text.setString("Button 13");
+    }
+    window.draw(text);
+}
+
 //Control buttons
-//1 = X, 2 = O, 3 = triangle, 4 = square
+// 0 = Square, 1 = X, 2 = Circle, 3 = Traingle, 4 = L1, 5 = R1, 6 = L2, 7 = R2, 8 = Options, 9 = Start, 10 = L3, 11 = R3, 12 = PS, 13 = Pad
