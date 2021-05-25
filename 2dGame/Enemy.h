@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <unordered_map>
+#include "Entity.h"
 
 class TextureCodex2
 {
@@ -12,26 +13,33 @@ private:
 	static std::unordered_map<std::string, std::shared_ptr<sf::Texture>> textures;
 };
 
-class Enemy
+class Enemy : public Entity
 {
 public:
 	Enemy(int type, const sf::Vector2f& pos, const sf::Vector2f& scaleFactor);
 	Enemy(const Enemy& source);
 	Enemy& operator=(const Enemy&) = delete;
 	void Draw(sf::RenderTarget& rt)const;
-	void SetDirection();
-	void Update(float dt);
+	virtual void SetDirection();
+	virtual void Update(float dt);
 	sf::Vector2f GetPosition();
 	sf::FloatRect GetSize();
 	int getType();
-private:
-	int type = 0;
-	int degrees = 0;
+	void setPosition(sf::Vector2f& newPos);
+	void setTexture(std::string url);
+	int enemyId = 0;
+	float jumpForce = 0.0f;
+	float speedForce = 0.0f;
+	float rotateForce = 1.0f;
+	virtual void rightCollision();
+	virtual void leftCollision();
 	std::shared_ptr<sf::Texture> pTexture;
+protected:
+	int type = 0;
+	float degrees = 0;
+	float jumpSpeed = 0.0f;
+
 	sf::Sprite sprite;
-	sf::Vector2f vel = { 0.0f, 0.0f };
-	sf::Vector2f pos;
 	sf::Vector2f scaleFactor;
-	sf::FloatRect size;
 };
 

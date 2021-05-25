@@ -1,9 +1,8 @@
 #include "Player.h"
 
 Player::Player(const sf::Vector2f& pos)
-    :
-    pos(pos)
 {
+    this->pos = pos;
     //SIZE OF SPRITE 416x454 SCALED TO x0.2 = 83.2x90.8
     sprite.setScale(0.3f, 0.3f);
     //WAIFU SIZE 1,6m so 1,6m = 90px
@@ -13,6 +12,8 @@ Player::Player(const sf::Vector2f& pos)
     animations[int(AnimationIndex::JumpUp)] = PlayerAnimation(3, 12, "sprite/character/jump/Jump (", "1", ").png");
     animations[int(AnimationIndex::JumpDown)] = PlayerAnimation(4, 5, "sprite/character/jump/Jump (", "1", ").png");
     animations[int(AnimationIndex::Guard)] = PlayerAnimation(5, 16, "sprite/character/shield/Shield (", "1", ").png");
+    animations[int(AnimationIndex::LightAttack)] = PlayerAnimation(6, 10, "sprite/character/attack/Attack (", "1", ").png");
+    mass = 1.0f;
 }
 
 void Player::Draw(sf::RenderTarget& rt) const
@@ -55,6 +56,7 @@ void Player::SetDirection(sf::Vector2f& dir)
         {
             //INCREASE SPEED GRADUALLY UP T0 9,6m/s or 540px/s
             jumpSpeed += 540.0f / 60.0f;
+            jumpSpeed *= mass;
             if (jumpSpeed >= 540.0f) {
                 jumpSpeed = 540.0f;
             }
@@ -74,89 +76,106 @@ void Player::SetDirection(sf::Vector2f& dir)
 
 void Player::Update(float dt)
 {
-    //UPDATING POS
-    pos += vel * dt;
-    if (guard) {
-        curAnimation = AnimationIndex::Guard;
-        walking = false;
-        running = false;
-    }
-    //SETTING CURRENT ANIMATION
-    if (vel.y < 0) {
-        curAnimation = AnimationIndex::JumpUp;
-    }
-    else if (vel.y > 0) {
-        curAnimation = AnimationIndex::JumpDown;
-    }
-    else if (vel.x == 0.0f && vel.y == 0.0f && !guard) {
-        curAnimation = AnimationIndex::Idle;
-        walking = false;
-        running = false;
-    }
-    else if (vel.x > 0) {
-        if (!shiftPressed)
+    if (!atkAnimation) {
+        //UPDATING POS
+        pos += vel * dt;
+        if (guard) {
+            curAnimation = AnimationIndex::Guard;
+            walking = false;
+            running = false;
+        }
+        if (atk && jumpSpeed == 0) {
+            curAnimation = AnimationIndex::LightAttack;
+            walking = false;
+            running = false;
+            atkAnimation = true;
+        }
+        //SETTING CURRENT ANIMATION
+        if (vel.y < 0) {
+            curAnimation = AnimationIndex::JumpUp;
+        }
+        else if (vel.y > 0) {
+            curAnimation = AnimationIndex::JumpDown;
+        }
+        else if (vel.x == 0.0f && vel.y == 0.0f && !guard && !atk) {
+            curAnimation = AnimationIndex::Idle;
+            walking = false;
+            running = false;
+        }
+        else if (vel.x > 0) {
+            if (!shiftPressed)
+            {
+                walking = true;
+                faceDir = 0;
+                curAnimation = AnimationIndex::Walking;
+            }
+            else
+            {
+                running = true;
+                faceDir = 0;
+                curAnimation = AnimationIndex::Run;
+            }
+        }
+        else if (vel.x < 0) {
+            if (!shiftPressed)
+            {
+                walking = true;
+                faceDir = 1;
+                curAnimation = AnimationIndex::Walking;
+            }
+            else
+            {
+                running = true;
+                faceDir = 1;
+                curAnimation = AnimationIndex::Run;
+            }
+        }
+        if (vel.x < 0)
         {
-            walking = true;
-            faceDir = 0;
-            curAnimation = AnimationIndex::Walking;
+            sprite.setScale({ -0.3f, 0.3f });
         }
-        else
+        else if (vel.x > 0)
         {
-            running = true;
-            faceDir = 0;
-            curAnimation = AnimationIndex::Run;
+            sprite.setScale({ 0.3f, 0.3f });
         }
-    }
-    else if (vel.x < 0) {
-        if (!shiftPressed)
-        {
-            walking = true;
-            faceDir = 1;
-            curAnimation = AnimationIndex::Walking;
+        //CHECKING IF BY THE TIME OF JUMP SHIFT WAS PRESSED
+        if (lastAnimation != curAnimation) {
+            if (curAnimation == AnimationIndex::JumpUp && lastAnimation == AnimationIndex::Run)
+            {
+                shiftPressed = true;
+            }
+            animations[int(lastAnimation)].resetCounter();
+            lastAnimation = curAnimation;
         }
-        else
-        {
-            running = true;
-            faceDir = 1;
-            curAnimation = AnimationIndex::Run;
-        }
-    }
-    if (vel.x < 0)
-    {
-        sprite.setScale({ -0.3f, 0.3f });
-    }
-    else if (vel.x > 0)
-    {
-        sprite.setScale({ 0.3f, 0.3f });
-    }
-    //CHECKING IF BY THE TIME OF JUMP SHIFT WAS PRESSED
-    if (lastAnimation != curAnimation) {
-        if (curAnimation == AnimationIndex::JumpUp && lastAnimation ==AnimationIndex::Run) 
-        { 
-            shiftPressed = true; 
-        }
-        animations[int(lastAnimation)].resetCounter();
-        lastAnimation = curAnimation;
-    }
 
-    //CHECKING IF JUMP UP OR JUMP DOWN ANIMATION MUST BE USED
-    if (curAnimation == AnimationIndex::JumpUp && animations[int(curAnimation)].isLastFrame() ||
-        curAnimation == AnimationIndex::JumpDown && animations[int(curAnimation)].isLastFrame()) 
-    {}
-    else 
-    { 
-        animations[int(curAnimation)].Update(dt); 
-        //SETTING SHIFT STATE TO FALSE WHEN JUMP ANIAMTION ENDS
-        if (curAnimation != AnimationIndex::JumpUp && curAnimation != AnimationIndex::JumpDown) { shiftPressed = false; }
+        //CHECKING IF JUMP UP OR JUMP DOWN ANIMATION MUST BE USED
+        if (curAnimation == AnimationIndex::JumpUp && animations[int(curAnimation)].isLastFrame() ||
+            curAnimation == AnimationIndex::JumpDown && animations[int(curAnimation)].isLastFrame())
+        {
+        }
+        else
+        {
+            animations[int(curAnimation)].Update(dt);
+            //SETTING SHIFT STATE TO FALSE WHEN JUMP ANIAMTION ENDS
+            if (curAnimation != AnimationIndex::JumpUp && curAnimation != AnimationIndex::JumpDown) { shiftPressed = false; }
+        }
+        //SETTING FINAL POSITION TO SPRITE
+        sprite.setPosition(pos);
     }
- 
-    //SETTING FINAL POSITION TO SPRITE
-    sprite.setPosition(pos);
+    else {
+        animations[int(curAnimation)].Update(dt);
+        if(animations[int(curAnimation)].isLastFrame())
+        {
+            atkAnimation = false;
+            atk = false;
+        }
+    }
     //ADDING ANIMATION TO SPRYTE
     if (guard) {
         guard = false;
     }
     animations[int(curAnimation)].ApplyToSprite(sprite);
+
 }
 
 bool Player::IsJumping() const
@@ -259,7 +278,9 @@ sf::Vector2f Player::GetPosition()
 
 sf::FloatRect Player::GetSize()
 {
-    return sprite.getGlobalBounds();
+    size = sprite.getGlobalBounds();
+    size.height = size.height * 0.75f;
+    return size;
 }
 
 int Player::getType()

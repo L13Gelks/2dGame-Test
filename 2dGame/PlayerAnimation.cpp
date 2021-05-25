@@ -3,19 +3,29 @@
 PlayerAnimation::PlayerAnimation(int value_in, int frames_in, std::string str_1, std::string str_2, std::string str_3)
 {
     value = value_in;
-    if (value != 3 && value != 4) {
-        //Normal animation time
+    switch (value)
+    {
+    case 1:
+    case 2:
         holdTime = 0.05f;
-    }
-    else { if (value == 3) { holdTime = 0.04f; }
-    else { holdTime = 0.08f; }
-    } //Jump animation time
-    if (value == 2) {
-        holdTime = 0.05f;
-    }
-    if (value == 5) {
+        break;
+    case 3:
+        holdTime = 0.04f;
+        break;
+    case 4:
+        holdTime = 0.08f;
+        break;
+    case 5:
         holdTime = 0.12f;
+        break;
+    case 6:
+        holdTime = 0.04f;
+        break;
+    default:
+        holdTime = 0.05f;
+        break;
     }
+
     str1 = str_1;
     str2 = str_2;
     str3 = str_3;

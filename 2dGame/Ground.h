@@ -26,6 +26,12 @@ public:
 	sf::Vector2f GetPosition();
 	sf::FloatRect GetSize();
 	int getType();
+	void setTileStart(float in);
+	float getTileStart();
+	void setTileEnd(float in);
+	float getTileEnd();
+	void setTileLength(float in);
+	float getTileLength();
 private:
     enum class GroundType
     {
@@ -42,5 +48,8 @@ private:
 	sf::Vector2f pos;
 	sf::Vector2f scaleFactor;
 	sf::FloatRect size;
+	float tileStart = 0.0f;
+	float tileEnd = 0.0f;
+	float tileLength = 0.0f;
 };
 

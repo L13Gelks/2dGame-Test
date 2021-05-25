@@ -1,5 +1,7 @@
 #include "PlayerAnimation.h"
-class Player {
+#include "Entity.h"
+
+class Player : public Entity{
 public:
     Player(const sf::Vector2f& pos);
     void Draw(sf::RenderTarget& rt)const;
@@ -9,7 +11,6 @@ public:
     bool IsShiftPressed() const;
     void SetJumping(bool jumping);
     void SetShiftPressed(bool shiftp);
-    bool TestCollision(const sf::FloatRect& size, const sf::Vector2f& pos, int type);
     void setHurtState(bool state);
     void SetGuard(bool state);
     bool isHurting();
@@ -17,8 +18,10 @@ public:
     sf::FloatRect GetSize();
     int getType();
     void setPosition(sf::Vector2f& newPos);
-    bool validJump = false;
-    bool falling = true;
+    bool atk = false;
+    bool atkAnimation = false;
+private:
+
 private:
     enum class AnimationIndex
     {
@@ -28,6 +31,7 @@ private:
         JumpUp,
         JumpDown,
         Guard,
+        LightAttack,
         Count
     };
 private:
@@ -40,11 +44,8 @@ private:
     bool running = false;
     bool shiftPressed = false;
     bool shift = false;
-    float speed = 0.0f;
-    sf::Vector2f pos;
-    sf::FloatRect size;
-    sf::Vector2f vel = { 0.0f, 0.0f };
     sf::Sprite sprite;
+    sf::FloatRect size;
     PlayerAnimation animations[int(AnimationIndex::Count)] = {};
     AnimationIndex curAnimation = AnimationIndex::Idle;
     AnimationIndex lastAnimation = AnimationIndex::Idle;

@@ -113,6 +113,36 @@ int Ground::getType()
     return type;
 }
 
+void Ground::setTileStart(float in)
+{
+    tileStart = in;
+}
+
+float Ground::getTileStart()
+{
+    return tileStart;
+}
+
+void Ground::setTileEnd(float in)
+{
+    tileEnd = in;
+}
+
+float Ground::getTileEnd()
+{
+    return tileEnd;
+}
+
+void Ground::setTileLength(float in)
+{
+    tileLength = in;
+}
+
+float Ground::getTileLength()
+{
+    return tileLength;
+}
+
 std::unordered_map<std::string, std::shared_ptr<sf::Texture>> TextureCodex::textures;
 
 std::shared_ptr<sf::Texture> TextureCodex::Acquire(const std::string& name)
