@@ -1,3 +1,4 @@
+#pragma once
 #include "PlayerAnimation.h"
 #include "Entity.h"
 
@@ -35,6 +36,7 @@ private:
         Count
     };
 private:
+    float dmgCooldown = 0.0f;
     bool jump = false;
     bool guard = false;
     float jumpSpeed = 0.0f;
@@ -49,4 +51,21 @@ private:
     PlayerAnimation animations[int(AnimationIndex::Count)] = {};
     AnimationIndex curAnimation = AnimationIndex::Idle;
     AnimationIndex lastAnimation = AnimationIndex::Idle;
+public:
+    //Stats
+    void setHealthPoints(float hp);
+    float getHealthPoints();
+    void setMaxHealthPoints(float mhp);
+    float getMaxHealthPoints();
+    void setManaPoints(float mp);
+    float getManaPoints();
+    void setMaxManaPoints(float mmp);
+    float getMaxManaPoints();
+
+private:
+    //Stats
+    float HealthPoints = 400.0f;
+    float MaxHealthPoints = 400.0f;
+    float ManaPoints = 100.0f;
+    float MaxManaPoints = 100.0f;
 };

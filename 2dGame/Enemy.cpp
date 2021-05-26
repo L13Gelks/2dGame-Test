@@ -40,7 +40,7 @@ void Enemy::SetDirection()
     //SETTING SPEED FOR JUMPING STATE
     if (validJump) {
             jumpSpeed = -jumpForce;
-            jumpForce *= 0.9;
+            jumpForce *= 0.9f;
     }
     else if (!validJump) {
         if (!falling) {

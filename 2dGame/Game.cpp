@@ -37,7 +37,7 @@ void Game::WorldCreator()
         vec1 = { 500,550 };
         vec2 = { 0.05f, 0.05f };
         PelotaMiedo* e = new PelotaMiedo(0,1, vec1, vec2);
-        enemy.push_back(e);
+       // enemy.push_back(e);
         vec1 = { 500,350 };
         vec2 = { 0.3f,0.3f };
         Slime* a = new Slime(1, 1, vec1, vec2);
@@ -66,25 +66,18 @@ void Game::WorldCreator()
 
 void Game::startGame()
 {
+    Menu menu(screenWidth, screenHeight);
     sf::Font font;
     if (!font.loadFromFile("Font/arial.ttf"))
     {
         // error...
     }
-
-    // select the font
-    text.setFont(font); // font is a sf::Font
-
-    // set the string to display
+    text.setFont(font);
     text.setString("Hello world");
-
-    // set the character size
-    text.setCharacterSize(24); // in pixels, not points!
-
-    // set the color
+    text.setCharacterSize(24);
     text.setFillColor(sf::Color::Red);
     // Create the main window
-    sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "Waifu Escape");
+    sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "Waifu's Souls");
     auto image = sf::Image{};
     if (!image.loadFromFile("sprite/Run (7).png"))
     {
@@ -104,7 +97,7 @@ void Game::startGame()
         playerPosX = fucker.GetPosition().x;
         WorldCreator();
         // get dt
-        float dt;
+        dt = 0.0f;
         {
             const auto new_tp = std::chrono::steady_clock::now();
             dt = std::chrono::duration<float>(new_tp - tp).count();
@@ -120,60 +113,32 @@ void Game::startGame()
             case sf::Event::Closed:
                 window.close();
                 break;
+            case sf::Event::KeyReleased:
+                if (event.key.code == sf::Keyboard::Escape) {
+                    menuPressed = !menuPressed;
+                }
+                else if (menuPressed && event.key.code == sf::Keyboard::Left)
+                {
+                    menu.MoveUp();
+                }
+                else if (menuPressed && event.key.code == sf::Keyboard::Right)
+                {
+                    menu.MoveDown();
+                }
+                break;
             default:
                 break;
             }
         }
-        
-   
-        //handle input
-        float x = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
-        sf::Vector2f dir = { 0.0f,1.0f };
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) || x < -10.f) {
-            dir.x -= 1.0f;
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) || x > 10.f) {
-            dir.x += 1.0f;
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) || sf::Joystick::isButtonPressed(0, 5)) {
-            fucker.SetShiftPressed(true);
-        }
-        else if (!fucker.IsJumping()) {
-            fucker.SetShiftPressed(false);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) || sf::Joystick::isButtonPressed(0, 1)) {
-            fucker.SetJumping(true);
-        }
-        else 
+
+        if (!menuPressed)
         {
-            fucker.SetJumping(false);
+            //handle input
+            PlayerInput(fucker);
         }
+        else {
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E) || sf::Joystick::isButtonPressed(0, 7)) {
-            dir.x = 0.0f;
-            if (!fucker.IsJumping())
-            {
-                fucker.SetGuard(true);
-            }
         }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) || sf::Joystick::isButtonPressed(0, 2)) {
-            dir.x = 0.0f;
-            if (!fucker.IsJumping())
-            {
-                fucker.atk = true;
-            }
-        }
-
-
-        if (fucker.isHurting()) 
-        {
-            fucker.setHurtState(false);
-        }
-
-
-        fucker.SetDirection(dir);
-
         //update model
         fucker.Update(dt);
         // Clear screen
@@ -181,103 +146,8 @@ void Game::startGame()
         // Draw the sprite
         ground[0].Draw(window);
         fucker.Draw(window);
-        for (int e = 0; e < enemy.size(); e++)
-        {
-            enemy[e]->SetDirection();
-            int col = 0;
-            sf::Vector2f enemyPos = { enemy[e]->GetPosition().x - enemy[e]->GetSize().width/2,enemy[e]->GetPosition().y- enemy[e]->GetSize().height/2 };
-            if (e >= 0) { col = TestCollision(fucker.GetSize(), fucker.GetPosition(), enemy[e]->GetSize(),enemyPos); }
-            if (col != 0)
-            {
-                sf::Vector2f newPos = fucker.GetPosition();
-                newPos.y = enemyPos.y - fucker.GetSize().height + 1;
-                fucker.validJump = true;
-                fucker.falling = false;
-                switch (col)
-                {
-                case 1:
-                    break;
-                case 2:
-                    fucker.validJump = false;
-                    fucker.falling = true;
-                    newPos.x = enemyPos.x + enemy[e]->GetSize().width + 2;
-                    newPos.y = fucker.GetPosition().y;
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    fucker.validJump = false;
-                    fucker.falling = true;
-                    newPos.x = enemyPos.x - 2;
-                    newPos.y = fucker.GetPosition().y;
-                    break;
-                default:
-                    break;
-                }
-                fucker.setPosition(newPos);
-            }
-            //Enemy with world
-            for (int g = 0; g < ground.size(); g++)
-            {
-                ground[g].SetDirection();
-                int col = 0;
-                if (g != 0) { col = TestCollision(enemy[e]->GetSize(), enemy[e]->GetPosition(), ground[g].GetSize(), ground[g].GetPosition()); }
 
-                if (col != 0)
-                {
-                    sf::Vector2f newPos = enemy[e]->GetPosition();
-                    newPos.y = ground[g].GetPosition().y - enemy[e]->GetSize().height + 1;
-                    enemy[e]->validJump = true;
-                    enemy[e]->falling = false;
-                    //Slime behavior
-                    if (enemy[e]->enemyId == 1)
-                    {
-                        if (newPos.x - enemy[e]->GetSize().width >= ground[g].getTileEnd() - 20)
-                        {
-                           enemy[e]->rightCollision();
-                           newPos.x -= 20;
-                            //col = 999;
-                        }
-                        else if (newPos.x - enemy[e]->GetSize().width <= ground[g].getTileStart() + 20)
-                        {
-                            enemy[e]->leftCollision();
-                            newPos.x += 20;
-                        }
-                    }
-                    //
-                    switch (col)
-                    {
-                    case 1:
-                        break;
-                    case 2:
-                        newPos.x = ground[g].GetPosition().x + ground[g].GetSize().width + 5;
-                        newPos.y = enemy[e]->GetPosition().y;
-                        enemy[e]->leftCollision();
-                        break;
-                    case 3:
-                        break;
-                    case 4:
-                        newPos.x = ground[g].GetPosition().x - 5;
-                        newPos.y = enemy[e]->GetPosition().y;
-                        enemy[e]->rightCollision();
-                        break;
-                    default:
-                        break;
-                    }
-                    enemy[e]->setPosition(newPos);
-                }
-                ground[g].Update(dt);
-                if (g > 1)
-                {
-                    ground[g].Draw(window);
-                }
-            }
-
-            enemy[e]->Update(dt);
-            enemy[e]->Draw(window);
-
-        }
-
+        enemyPhysics(fucker,window);
 
         //Player with world
         for (int g = 0; g < ground.size(); g++)
@@ -288,6 +158,10 @@ void Game::startGame()
             
             if (col != 0)
             {
+                if(ground[g].getType() == 1)
+                {
+                    fucker.setHurtState(true);
+                }
                 sf::Vector2f newPos = fucker.GetPosition();
                 newPos.y = ground[g].GetPosition().y - fucker.GetSize().height + 1;
                 fucker.validJump = true;
@@ -331,6 +205,19 @@ void Game::startGame()
             window.setView(view);
         }
         ground[1].Draw(window);
+        if (menuPressed) {
+            sf::Vector2f pos = { view.getCenter().x - screenWidth / 2, view.getCenter().y - screenHeight / 2 };
+            menu.setPosition(pos);
+            menu.draw(window);
+            switch (menu.getOption())
+            {
+            case 1:
+                menu.showStats(window,fucker);
+                break;
+            default:
+                break;
+            }
+        }
         // Update the window
         checkButton(window);
         window.display();
@@ -346,7 +233,7 @@ int Game::TestCollision(const sf::FloatRect& obj_size1, const sf::Vector2f& obj_
     if (obj_pos1.y + obj_size1.height >= obj_pos2.y && obj_pos1.y <= obj_pos2.y + obj_size2.height)
     {
         if (obj_pos1.x <= obj_pos2.x + obj_size2.width && obj_pos1.x >= obj_pos2.x) {
-            if (obj_pos1.y + obj_size1.height-5 > obj_pos2.y && obj_pos1.y < obj_pos2.y + obj_size2.height)
+            if (obj_pos1.y + obj_size1.height-10 > obj_pos2.y && obj_pos1.y < obj_pos2.y + obj_size2.height)
             {
                 if (obj_pos1.x + obj_size1.width >= obj_pos2.x && obj_pos1.x - 15 <= obj_pos2.x) {
                     return 4;
@@ -421,6 +308,152 @@ void Game::checkButton(sf::RenderTarget& window)
         text.setString("Button 13");
     }
     window.draw(text);
+}
+
+void Game::PlayerInput(Player& player)
+{
+    //handle input
+
+        float x = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+        sf::Vector2f dir = { 0.0f,1.0f };
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) || x < -10.f) {
+            dir.x -= 1.0f;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) || x > 10.f) {
+            dir.x += 1.0f;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) || sf::Joystick::isButtonPressed(0, 5)) {
+            player.SetShiftPressed(true);
+        }
+        else if (!player.IsJumping()) {
+            player.SetShiftPressed(false);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) || sf::Joystick::isButtonPressed(0, 1)) {
+            player.SetJumping(true);
+        }
+        else
+        {
+            player.SetJumping(false);
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E) || sf::Joystick::isButtonPressed(0, 7)) {
+            dir.x = 0.0f;
+            if (!player.IsJumping())
+            {
+                player.SetGuard(true);
+            }
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) || sf::Joystick::isButtonPressed(0, 2)) {
+            dir.x = 0.0f;
+            if (!player.IsJumping())
+            {
+                player.atk = true;
+            }
+        }
+
+        player.SetDirection(dir);
+
+  
+}
+
+void Game::enemyPhysics(Player& fucker, sf::RenderTarget& window)
+{
+    for (int e = 0; e < enemy.size(); e++)
+    {
+        enemy[e]->SetDirection();
+        int col = 0;
+        sf::Vector2f enemyPos = { enemy[e]->GetPosition().x - enemy[e]->GetSize().width / 2,enemy[e]->GetPosition().y - enemy[e]->GetSize().height / 2 };
+        if (e >= 0) { col = TestCollision(fucker.GetSize(), fucker.GetPosition(), enemy[e]->GetSize(), enemyPos); }
+        if (col != 0)
+        {
+            sf::Vector2f newPos = fucker.GetPosition();
+            newPos.y = enemyPos.y - fucker.GetSize().height + 1;
+            fucker.validJump = true;
+            fucker.falling = false;
+            switch (col)
+            {
+            case 1:
+                break;
+            case 2:
+                fucker.validJump = false;
+                fucker.falling = true;
+                newPos.x = enemyPos.x + enemy[e]->GetSize().width + 2;
+                newPos.y = fucker.GetPosition().y;
+                break;
+            case 3:
+                break;
+            case 4:
+                fucker.validJump = false;
+                fucker.falling = true;
+                newPos.x = enemyPos.x - 2;
+                newPos.y = fucker.GetPosition().y;
+                break;
+            default:
+                break;
+            }
+            fucker.setPosition(newPos);
+        }
+        //Enemy with world
+        for (int g = 0; g < ground.size(); g++)
+        {
+            ground[g].SetDirection();
+            int col = 0;
+            if (g != 0) { col = TestCollision(enemy[e]->GetSize(), enemy[e]->GetPosition(), ground[g].GetSize(), ground[g].GetPosition()); }
+
+            if (col != 0)
+            {
+                sf::Vector2f newPos = enemy[e]->GetPosition();
+                newPos.y = ground[g].GetPosition().y - enemy[e]->GetSize().height + 1;
+                enemy[e]->validJump = true;
+                enemy[e]->falling = false;
+                //Slime behavior
+                if (enemy[e]->enemyId == 1)
+                {
+                    if (newPos.x - enemy[e]->GetSize().width >= ground[g].getTileEnd() - 20)
+                    {
+                        enemy[e]->rightCollision();
+                        newPos.x -= 20;
+                        //col = 999;
+                    }
+                    else if (newPos.x - enemy[e]->GetSize().width <= ground[g].getTileStart() + 20)
+                    {
+                        enemy[e]->leftCollision();
+                        newPos.x += 20;
+                    }
+                }
+                //
+                switch (col)
+                {
+                case 1:
+                    break;
+                case 2:
+                    newPos.x = ground[g].GetPosition().x + ground[g].GetSize().width + 5;
+                    newPos.y = enemy[e]->GetPosition().y;
+                    enemy[e]->leftCollision();
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    newPos.x = ground[g].GetPosition().x - 5;
+                    newPos.y = enemy[e]->GetPosition().y;
+                    enemy[e]->rightCollision();
+                    break;
+                default:
+                    break;
+                }
+                enemy[e]->setPosition(newPos);
+            }
+            ground[g].Update(dt);
+            if (g > 1)
+            {
+                ground[g].Draw(window);
+            }
+        }
+
+        enemy[e]->Update(dt);
+        enemy[e]->Draw(window);
+    }
 }
 
 //Control buttons

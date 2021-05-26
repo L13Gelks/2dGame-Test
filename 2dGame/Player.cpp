@@ -161,6 +161,7 @@ void Player::Update(float dt)
         }
         //SETTING FINAL POSITION TO SPRITE
         sprite.setPosition(pos);
+        atk = false;
     }
     else {
         animations[int(curAnimation)].Update(dt);
@@ -174,6 +175,19 @@ void Player::Update(float dt)
     if (guard) {
         guard = false;
     }
+    if (hurt == true) { 
+        sprite.setColor(sf::Color(255, 100, 100)); 
+        if(dmgCooldown > 1.0f)
+        {
+            dmgCooldown = 0.0f;
+            hurt = false;
+        }
+        else
+        {
+            dmgCooldown += dt;
+        }
+    }
+    else { sprite.setColor(sf::Color(255, 255, 255)); }
     animations[int(curAnimation)].ApplyToSprite(sprite);
 
 }
@@ -258,7 +272,9 @@ bool Player::TestCollision(const  sf::FloatRect& size_in, const sf::Vector2f& po
 
 void Player::setHurtState(bool state)
 {
+
     hurt = state;
+
 }
 
 void Player::SetGuard(bool state)
@@ -293,3 +309,42 @@ void Player::setPosition(sf::Vector2f& newPos)
     pos = newPos;
 }
 
+void Player::setHealthPoints(float hp)
+{
+    HealthPoints = hp;
+}
+
+float Player::getHealthPoints()
+{
+    return HealthPoints;
+}
+
+void Player::setMaxHealthPoints(float mhp)
+{
+    MaxHealthPoints = mhp;
+}
+
+float Player::getMaxHealthPoints()
+{
+    return MaxHealthPoints;
+}
+
+void Player::setManaPoints(float mp)
+{
+    ManaPoints = mp;
+}
+
+float Player::getManaPoints()
+{
+    return ManaPoints;
+}
+
+void Player::setMaxManaPoints(float mmp)
+{
+    MaxManaPoints = mmp;
+}
+
+float Player::getMaxManaPoints()
+{
+    return MaxManaPoints;
+}
