@@ -40,7 +40,8 @@ void Player::SetDirection(sf::Vector2f& dir)
             speed = 150.0f;
         }
     }
-    else {
+    else 
+    {
         //90px/s = 1,6 m/s
         speed = 150.0f;
     }
@@ -102,7 +103,9 @@ void Player::Update(float dt)
         else if(guard && ManaPoints <= 1.0f) {
         guard = false;
         }
-        if (atk && jumpSpeed == 0) {
+        if (atk && jumpSpeed == 0 && StaminaPoints >= 5.0f) {
+            StaminaPoints -= 5.0f;
+            Sregen = false;
             curAnimation = AnimationIndex::LightAttack;
             walking = false;
             running = false;

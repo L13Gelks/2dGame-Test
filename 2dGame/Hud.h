@@ -1,7 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <sstream>
 #include "Player.h"
+#include <iostream>   
+#include <string>
 #define MAX_NUMBER_STATS 3
 
 class Hud
