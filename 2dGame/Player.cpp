@@ -29,7 +29,7 @@ void Player::SetDirection(sf::Vector2f& dir)
         if(StaminaPoints >= 1.0f)
         {
             Sregen = false;
-            StaminaPoints -= 0.1f;
+            StaminaPoints -= 0.3f;
             //180px/s = 3,2 m/s
             speed = 300.0f;
         }
@@ -46,8 +46,8 @@ void Player::SetDirection(sf::Vector2f& dir)
     }
 
     //SETTING SPEED FOR JUMPING STATE
-    if (jump && validJump && StaminaPoints >= 1.0f) {
-        StaminaPoints -= 5.0f;
+    if (jump && validJump && StaminaPoints >= 10.0f) {
+        StaminaPoints -= 10.0f;
         Sregen = false;
         if (speed == 300.0f)
         {
@@ -383,6 +383,16 @@ float Player::getMaxHealthPoints()
     return MaxHealthPoints;
 }
 
+void Player::setHealthPointsRegen(float hpr)
+{
+    HealthRegen = hpr;
+}
+
+float Player::getHealthPointsRegen()
+{
+    return HealthRegen;
+}
+
 void Player::setStaminaPoints(float sp)
 {
     StaminaPoints = sp;
@@ -403,6 +413,16 @@ float Player::getMaxStaminaPoints()
     return MaxStaminaPoints;
 }
 
+void Player::setStaminaPointsRegen(float spr)
+{
+    StaminaRegen = spr;
+}
+
+float Player::getStaminaPointsRegen()
+{
+    return StaminaRegen;
+}
+
 void Player::setManaPoints(float mp)
 {
     ManaPoints = mp;
@@ -421,4 +441,14 @@ void Player::setMaxManaPoints(float mmp)
 float Player::getMaxManaPoints()
 {
     return MaxManaPoints;
+}
+
+void Player::setManaPointsRegen(float mpr)
+{
+    ManaRegen = mpr;
+}
+
+float Player::getManaPointsRegen()
+{
+    return Mregen;
 }

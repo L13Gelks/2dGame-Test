@@ -118,13 +118,16 @@ void Game::startGame()
                 if (event.key.code == sf::Keyboard::Escape) {
                     menuPressed = !menuPressed;
                 }
-                else if (menuPressed && event.key.code == sf::Keyboard::Left)
+                if(menuPressed)
                 {
-                    menu.MoveUp();
-                }
-                else if (menuPressed && event.key.code == sf::Keyboard::Right)
-                {
-                    menu.MoveDown();
+                    if (event.key.code == sf::Keyboard::Left)
+                    {
+                        menu.MoveUp();
+                    }
+                    else if (event.key.code == sf::Keyboard::Right)
+                    {
+                        menu.MoveDown();
+                    }
                 }
                 break;
             default:
@@ -136,9 +139,6 @@ void Game::startGame()
         {
             //handle input
             PlayerInput(fucker);
-        }
-        else {
-
         }
         //update model
         fucker.Update(dt);
@@ -215,7 +215,7 @@ void Game::startGame()
             hud.setStats(fucker);
             hud.draw(window);
         }
-        if (menuPressed) {
+        else if (menuPressed) {
             sf::Vector2f pos = { view.getCenter().x - screenWidth / 2, view.getCenter().y - screenHeight / 2 };
             menu.setPosition(pos);
             menu.draw(window);
@@ -229,7 +229,7 @@ void Game::startGame()
             }
         }
         // Update the window
-        checkButton(window);
+        //checkButton(window);
         window.display();
         
         traveledDistance += playerMoveX;

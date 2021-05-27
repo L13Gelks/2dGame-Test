@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <sstream>
 #include "Player.h"
-#define MAX_NUMBER_STATS 2
+#define MAX_NUMBER_STATS 3
 
 class Hud
 {
@@ -14,6 +14,9 @@ public:
 private:
 	int screenHeight = 760;
 	int screenWidth = 1360;
+	int HealhPoints = 0;
+	int ManaPoints = 0;
+	int StaminaPoints = 0;
 	float radius = 50.0f;
 	float MaxRadius = 50.0f;
 	float Hbar = 300.0f;

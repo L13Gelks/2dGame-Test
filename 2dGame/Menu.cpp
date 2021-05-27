@@ -59,8 +59,11 @@ void Menu::showStats(sf::RenderTarget& rt, Player& player)
 {
     std::string info = "";
     std::stringstream sstream;
+    int mult = 0.5f;
+    int counter = 0;
         for (int i = 0; i < MAX_NUMBER_STATS; i++)
         {
+            if (i >= 8) { mult = 1; }
             stats[i].setFont(font);
             sstream.str("");
             switch (i)
@@ -74,11 +77,40 @@ void Menu::showStats(sf::RenderTarget& rt, Player& player)
                 stats[i].setString(info);
                 break;
             case 1:
+                info = "Stamina: ";
+                sstream << player.getStaminaPoints();
+                sstream << "/";
+                sstream << player.getMaxStaminaPoints();
+                info += sstream.str();
+                stats[i].setString(info);
+                break;
+            case 2:
                 info = "Mana: ";
                 sstream << player.getManaPoints();
                 sstream << "/";
                 sstream << player.getMaxManaPoints();
                 info += sstream.str();
+                stats[i].setString(info);
+                break;
+            case 8:
+                info = "Hp Regen: ";
+                sstream << player.getHealthPointsRegen();
+                info += sstream.str();
+                info += "/s";
+                stats[i].setString(info);
+                break;
+            case 9:
+                info = "Sp Regen: ";
+                sstream << player.getStaminaPointsRegen();
+                info += sstream.str();
+                info += "/s";
+                stats[i].setString(info);
+                break;
+            case 10:
+                info = "Mp Regen: ";
+                sstream << player.getManaPointsRegen();
+                info += sstream.str();
+                info += "/s";
                 stats[i].setString(info);
                 break;
             default:
@@ -87,8 +119,10 @@ void Menu::showStats(sf::RenderTarget& rt, Player& player)
             }
             stats[i].setCharacterSize(20);
             stats[i].setFillColor(sf::Color::White);
-            stats[i].setPosition(sf::Vector2f((pos.x + (screenWidth / 2)) + (screenWidth / 4), screenHeight/2 + 21*i));
+            stats[i].setPosition(sf::Vector2f((pos.x + (screenWidth / 2)) + (screenWidth / 4) * mult, screenHeight/2 + 21*counter));
             rt.draw(stats[i]);
+            counter++;
+            if (counter >= 8) { counter = 0; }
         }
 }
 

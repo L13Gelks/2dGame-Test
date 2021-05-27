@@ -3,7 +3,7 @@
 #include <sstream>
 #include "Player.h"
 #define MAX_NUMBER_OPTIONS 3
-#define MAX_NUMBER_STATS 8
+#define MAX_NUMBER_STATS 16
 
 class Menu
 {

@@ -59,14 +59,20 @@ public:
     float getHealthPoints();
     void setMaxHealthPoints(float mhp);
     float getMaxHealthPoints();
+    void setHealthPointsRegen(float hpr);
+    float getHealthPointsRegen();
     void setStaminaPoints(float sp);
     float getStaminaPoints();
     void setMaxStaminaPoints(float msp);
     float getMaxStaminaPoints();
+    void setStaminaPointsRegen(float spr);
+    float getStaminaPointsRegen();
     void setManaPoints(float mp);
     float getManaPoints();
     void setMaxManaPoints(float mmp);
     float getMaxManaPoints();
+    void setManaPointsRegen(float mpr);
+    float getManaPointsRegen();
 
 private:
     //Stats
@@ -77,7 +83,8 @@ private:
     float ManaPoints = 100.0f;
     float MaxManaPoints = 100.0f;
     float ManaRegen = 1.0f;
-    float StaminaRegen = 5.0f;
+    float StaminaRegen = 10.0f;
+    float HealthRegen = 0.0f;
     bool Mregen = true;
     bool Sregen = true;
 };

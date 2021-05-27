@@ -10,12 +10,17 @@ Hud::Hud(int width, int height)
     stats[0].setFont(font);
     stats[0].setString("");
     stats[0].setCharacterSize(20);
-    stats[0].setFillColor(sf::Color::Red);
+    stats[0].setFillColor(sf::Color::White);
 
     stats[1].setFont(font);
     stats[1].setString("");
     stats[1].setCharacterSize(20);
-    stats[1].setFillColor(sf::Color::Blue);
+    stats[1].setFillColor(sf::Color::White);
+
+    stats[2].setFont(font);
+    stats[2].setString("");
+    stats[2].setCharacterSize(20);
+    stats[2].setFillColor(sf::Color::White);
 
     hpBar.setSize(sf::Vector2f(300.0f, 10.f));
     hpBar.setFillColor(sf::Color::Red);
@@ -62,14 +67,17 @@ void Hud::draw(sf::RenderTarget& rt)
 
 void Hud::setStats(Player& player)
 {
+    ManaPoints = player.getManaPoints();
     radius = MaxRadius;
-    radius *= (player.getManaPoints() / player.getMaxManaPoints());
+    radius *= (ManaPoints / player.getMaxManaPoints());
 
+    HealhPoints = player.getHealthPoints();
     Hbar = 300.0f;
-    Hbar *= (player.getHealthPoints() / player.getMaxHealthPoints());
+    Hbar *= (HealhPoints / player.getMaxHealthPoints());
 
+    StaminaPoints = player.getStaminaPoints();
     Sbar = 200.0f;
-    Sbar *= (player.getStaminaPoints() / player.getMaxStaminaPoints());
+    Sbar *= (StaminaPoints / player.getMaxStaminaPoints());
 }
 
 void Hud::setPosition(sf::Vector2f& position)
