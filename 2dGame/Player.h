@@ -21,6 +21,7 @@ public:
     void setPosition(sf::Vector2f& newPos);
     bool atk = false;
     bool atkAnimation = false;
+    void setDamage(float dmg);
 private:
 
 private:
@@ -51,12 +52,17 @@ private:
     PlayerAnimation animations[int(AnimationIndex::Count)] = {};
     AnimationIndex curAnimation = AnimationIndex::Idle;
     AnimationIndex lastAnimation = AnimationIndex::Idle;
+    float seconds = 0.0f;
 public:
     //Stats
     void setHealthPoints(float hp);
     float getHealthPoints();
     void setMaxHealthPoints(float mhp);
     float getMaxHealthPoints();
+    void setStaminaPoints(float sp);
+    float getStaminaPoints();
+    void setMaxStaminaPoints(float msp);
+    float getMaxStaminaPoints();
     void setManaPoints(float mp);
     float getManaPoints();
     void setMaxManaPoints(float mmp);
@@ -66,6 +72,12 @@ private:
     //Stats
     float HealthPoints = 400.0f;
     float MaxHealthPoints = 400.0f;
+    float StaminaPoints = 100.0f;
+    float MaxStaminaPoints = 100.0f;
     float ManaPoints = 100.0f;
     float MaxManaPoints = 100.0f;
+    float ManaRegen = 1.0f;
+    float StaminaRegen = 5.0f;
+    bool Mregen = true;
+    bool Sregen = true;
 };

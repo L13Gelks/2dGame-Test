@@ -67,6 +67,7 @@ void Game::WorldCreator()
 void Game::startGame()
 {
     Menu menu(screenWidth, screenHeight);
+    Hud hud(screenWidth, screenHeight);
     sf::Font font;
     if (!font.loadFromFile("Font/arial.ttf"))
     {
@@ -144,8 +145,10 @@ void Game::startGame()
         // Clear screen
         window.clear();
         // Draw the sprite
-        ground[0].Draw(window);
-        fucker.Draw(window);
+        if (!menuPressed) {
+            ground[0].Draw(window);
+            fucker.Draw(window);
+        }
 
         enemyPhysics(fucker,window);
 
@@ -161,6 +164,7 @@ void Game::startGame()
                 if(ground[g].getType() == 1)
                 {
                     fucker.setHurtState(true);
+                    fucker.setDamage(0.5f);
                 }
                 sf::Vector2f newPos = fucker.GetPosition();
                 newPos.y = ground[g].GetPosition().y - fucker.GetSize().height + 1;
@@ -190,7 +194,7 @@ void Game::startGame()
                 fucker.setPosition(newPos);
             }
             ground[g].Update(dt);
-            if (g > 1)
+            if (g > 1 && !menuPressed)
             {
                 ground[g].Draw(window);
             }
@@ -204,7 +208,13 @@ void Game::startGame()
             view.move(playerMoveX, 0.0f);
             window.setView(view);
         }
-        ground[1].Draw(window);
+        if (!menuPressed) {
+            sf::Vector2f pos = { view.getCenter().x - screenWidth / 2, view.getCenter().y - screenHeight / 2 };
+            ground[1].Draw(window);
+            hud.setPosition(pos);
+            hud.setStats(fucker);
+            hud.draw(window);
+        }
         if (menuPressed) {
             sf::Vector2f pos = { view.getCenter().x - screenWidth / 2, view.getCenter().y - screenHeight / 2 };
             menu.setPosition(pos);

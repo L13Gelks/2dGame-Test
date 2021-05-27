@@ -11,6 +11,7 @@
 #include "PelotaMiedo.h"
 #include "Slime.h"
 #include "Menu.h"
+#include "Hud.h"
 #include <vector>
 #include <random>
 

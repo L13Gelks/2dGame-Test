@@ -62,6 +62,7 @@ void Menu::showStats(sf::RenderTarget& rt, Player& player)
         for (int i = 0; i < MAX_NUMBER_STATS; i++)
         {
             stats[i].setFont(font);
+            sstream.str("");
             switch (i)
             {
             case 0:

@@ -26,8 +26,19 @@ void Player::SetDirection(sf::Vector2f& dir)
     //SETTING SPEED FOR WALKING OR RUNNING STATE
     if (shift || shiftPressed)
     {
-        //180px/s = 3,2 m/s
-        speed = 300.0f;
+        if(StaminaPoints >= 1.0f)
+        {
+            Sregen = false;
+            StaminaPoints -= 0.1f;
+            //180px/s = 3,2 m/s
+            speed = 300.0f;
+        }
+        else
+        {
+            shift = false;
+            shiftPressed = false;
+            speed = 150.0f;
+        }
     }
     else {
         //90px/s = 1,6 m/s
@@ -35,7 +46,9 @@ void Player::SetDirection(sf::Vector2f& dir)
     }
 
     //SETTING SPEED FOR JUMPING STATE
-    if (jump && validJump) {
+    if (jump && validJump && StaminaPoints >= 1.0f) {
+        StaminaPoints -= 5.0f;
+        Sregen = false;
         if (speed == 300.0f)
         {
             jumpSpeed = -80.0f * 4;
@@ -79,10 +92,15 @@ void Player::Update(float dt)
     if (!atkAnimation) {
         //UPDATING POS
         pos += vel * dt;
-        if (guard) {
+        if (guard && ManaPoints >= 1.0f) {
+            Mregen = false;
+            ManaPoints -= 0.3f;
             curAnimation = AnimationIndex::Guard;
             walking = false;
             running = false;
+        }
+        else if(guard && ManaPoints <= 1.0f) {
+        guard = false;
         }
         if (atk && jumpSpeed == 0) {
             curAnimation = AnimationIndex::LightAttack;
@@ -189,7 +207,38 @@ void Player::Update(float dt)
     }
     else { sprite.setColor(sf::Color(255, 255, 255)); }
     animations[int(curAnimation)].ApplyToSprite(sprite);
-
+    if (seconds >= 1.0f)
+    {
+        if (Mregen)
+        {
+            if (ManaPoints < MaxManaPoints)
+            {
+                ManaPoints += ManaRegen;
+                if (ManaPoints > MaxManaPoints)
+                {
+                    ManaPoints = MaxManaPoints;
+                }
+            }
+        }
+        if(Sregen)
+        {
+            if (StaminaPoints < MaxStaminaPoints)
+            {
+                StaminaPoints += StaminaRegen;
+                if(StaminaPoints > MaxStaminaPoints)
+                {
+                    StaminaPoints = MaxStaminaPoints;
+                }
+            }
+        }
+ 
+        seconds -= seconds;
+    }
+    else {
+        seconds += dt;
+    }
+    Mregen = true;
+    Sregen = true;
 }
 
 bool Player::IsJumping() const
@@ -309,6 +358,11 @@ void Player::setPosition(sf::Vector2f& newPos)
     pos = newPos;
 }
 
+void Player::setDamage(float dmg)
+{
+    HealthPoints -= dmg;
+}
+
 void Player::setHealthPoints(float hp)
 {
     HealthPoints = hp;
@@ -327,6 +381,26 @@ void Player::setMaxHealthPoints(float mhp)
 float Player::getMaxHealthPoints()
 {
     return MaxHealthPoints;
+}
+
+void Player::setStaminaPoints(float sp)
+{
+    StaminaPoints = sp;
+}
+
+float Player::getStaminaPoints()
+{
+    return StaminaPoints;
+}
+
+void Player::setMaxStaminaPoints(float msp)
+{
+    MaxStaminaPoints = msp;
+}
+
+float Player::getMaxStaminaPoints()
+{
+    return MaxStaminaPoints;
 }
 
 void Player::setManaPoints(float mp)
