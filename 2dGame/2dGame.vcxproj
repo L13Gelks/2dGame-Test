@@ -23,7 +23,9 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Ground.cpp" />
+    <ClCompile Include="Hud.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="PelotaMiedo.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerAnimation.cpp" />
@@ -34,6 +36,8 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Ground.h" />
+    <ClInclude Include="Hud.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="PelotaMiedo.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerAnimation.h" />

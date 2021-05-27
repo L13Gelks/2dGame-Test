@@ -1,3 +1,4 @@
+#pragma once
 #include "PlayerAnimation.h"
 #include "Entity.h"
 
@@ -20,6 +21,7 @@ public:
     void setPosition(sf::Vector2f& newPos);
     bool atk = false;
     bool atkAnimation = false;
+    void setDamage(float dmg);
 private:
 
 private:
@@ -35,6 +37,7 @@ private:
         Count
     };
 private:
+    float dmgCooldown = 0.0f;
     bool jump = false;
     bool guard = false;
     float jumpSpeed = 0.0f;
@@ -49,4 +52,39 @@ private:
     PlayerAnimation animations[int(AnimationIndex::Count)] = {};
     AnimationIndex curAnimation = AnimationIndex::Idle;
     AnimationIndex lastAnimation = AnimationIndex::Idle;
+    float seconds = 0.0f;
+public:
+    //Stats
+    void setHealthPoints(float hp);
+    float getHealthPoints();
+    void setMaxHealthPoints(float mhp);
+    float getMaxHealthPoints();
+    void setHealthPointsRegen(float hpr);
+    float getHealthPointsRegen();
+    void setStaminaPoints(float sp);
+    float getStaminaPoints();
+    void setMaxStaminaPoints(float msp);
+    float getMaxStaminaPoints();
+    void setStaminaPointsRegen(float spr);
+    float getStaminaPointsRegen();
+    void setManaPoints(float mp);
+    float getManaPoints();
+    void setMaxManaPoints(float mmp);
+    float getMaxManaPoints();
+    void setManaPointsRegen(float mpr);
+    float getManaPointsRegen();
+
+private:
+    //Stats
+    float HealthPoints = 400.0f;
+    float MaxHealthPoints = 400.0f;
+    float StaminaPoints = 100.0f;
+    float MaxStaminaPoints = 100.0f;
+    float ManaPoints = 100.0f;
+    float MaxManaPoints = 100.0f;
+    float ManaRegen = 1.0f;
+    float StaminaRegen = 10.0f;
+    float HealthRegen = 0.0f;
+    bool Mregen = true;
+    bool Sregen = true;
 };

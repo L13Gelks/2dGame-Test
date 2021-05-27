@@ -10,6 +10,8 @@
 #include "Enemy.h"
 #include "PelotaMiedo.h"
 #include "Slime.h"
+#include "Menu.h"
+#include "Hud.h"
 #include <vector>
 #include <random>
 
@@ -24,6 +26,11 @@ public:
 		const sf::FloatRect& obj_size2, const sf::Vector2f& obj_pos2);
 	void checkButton(sf::RenderTarget& rt);
 private:
+	void PlayerInput(Player& player);
+	void enemyPhysics(Player& player, sf::RenderTarget& rt);
+private:
+	bool menuPressed = false;
+	float dt = 0.0f;
 	sf::Text text;
 	float worldDistance = 58500.0f;
 	float traveledDistance = 0.0f;
