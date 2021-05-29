@@ -22,6 +22,11 @@ Hud::Hud(int width, int height)
     stats[2].setCharacterSize(15);
     stats[2].setFillColor(sf::Color::White);
 
+    stats[3].setFont(font);
+    stats[3].setString("");
+    stats[3].setCharacterSize(15);
+    stats[3].setFillColor(sf::Color::White);
+
     hpBar.setSize(sf::Vector2f(300.0f, 10.f));
     hpBar.setFillColor(sf::Color::Red);
     hpBarBorder.setSize(sf::Vector2f(300.0f, 10.f));
@@ -71,9 +76,12 @@ void Hud::draw(sf::RenderTarget& rt)
     stats[1].setPosition(pos.x + MaxRadius * 1.75f, pos.y + MaxRadius * 1.75f);
     stats[2].setString(std::to_string(StaminaPoints));
     stats[2].setPosition(pos.x + MaxRadius * 3, (outline.getPosition().y + MaxRadius / 2) + 20.0f);
+    stats[3].setString(std::to_string(exp));
+    stats[3].setPosition(pos.x + MaxRadius * 3, (outline.getPosition().y + MaxRadius / 2) + 60.0f);
     rt.draw(stats[0]);
     rt.draw(stats[1]);
     rt.draw(stats[2]);
+    rt.draw(stats[3]);
 }
 
 void Hud::setStats(Player& player)
@@ -89,6 +97,8 @@ void Hud::setStats(Player& player)
     StaminaPoints = player.getStaminaPoints();
     Sbar = 200.0f;
     Sbar *= (StaminaPoints / player.getMaxStaminaPoints());
+
+    exp = (int)player.getExperiencePoints();
 }
 
 void Hud::setPosition(sf::Vector2f& position)
