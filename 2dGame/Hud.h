@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Player.h"
+#include "Enemy.h"
 #include <iostream>   
 #include <string>
 #define MAX_NUMBER_STATS_DISPLAYED 4

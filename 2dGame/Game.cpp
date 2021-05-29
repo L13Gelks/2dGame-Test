@@ -46,7 +46,11 @@ void Game::WorldCreator()
     else {
         if(enemy.size() <= 1)
         {
-            vec1 = { 500,150 };
+            std::random_device rd;
+            std::mt19937 rng(rd());
+            std::uniform_int_distribution<int> xPos(300, 1000);
+            std::uniform_int_distribution<int> yPos(0, 300);
+            vec1 = { (float)xPos(rng),(float)yPos(rng) };
             vec2 = { 0.3f,0.3f };
             Slime* a = new Slime(1, 1, vec1, vec2);
             enemy.push_back(a);
@@ -382,6 +386,7 @@ void Game::enemyPhysics(Player& fucker, sf::RenderTarget& window)
     for (int e = 0; e < enemy.size(); e++)
     {
         enemy[e]->SetDirection();
+        enemy[e]->displayHealthPoints(window);
         int col = 0;
         sf::Vector2f enemyPos = { enemy[e]->GetPosition().x - enemy[e]->GetSize().width / 2,enemy[e]->GetPosition().y - enemy[e]->GetSize().height / 2 };
         if (e >= 0) { col = TestCollision(fucker.GetSize(), fucker.GetPosition(), enemy[e]->GetSize(), enemyPos); }

@@ -79,5 +79,14 @@ protected:
 	bool Mregen = true;
 	bool Sregen = true;
 	//Stats
+public:
+	//HUD
+	sf::Font font;
+	sf::Text enemyHp;
+	sf::Vector2f enemyPos;
+	sf::RectangleShape hpBar;
+	sf::RectangleShape hpBarBorder;
+	float Hbar = 100.f;
+	void displayHealthPoints(sf::RenderTarget& rt);
 };
 

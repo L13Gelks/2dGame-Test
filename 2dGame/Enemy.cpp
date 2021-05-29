@@ -6,6 +6,21 @@ Enemy::Enemy(int type, const sf::Vector2f& pos, const sf::Vector2f& scaleFactor)
 {
     sprite.setScale(scaleFactor.x, scaleFactor.y);
     this->pos = pos;
+    if (!font.loadFromFile("Font/arial.ttf"))
+    {
+        // error...
+    }
+    enemyHp.setFont(font);
+    enemyHp.setString("");
+    enemyHp.setCharacterSize(10);
+    enemyHp.setFillColor(sf::Color::White);
+
+    hpBar.setSize(sf::Vector2f(100.0f, 6.f));
+    hpBar.setFillColor(sf::Color::Red);
+    hpBarBorder.setSize(sf::Vector2f(100.0f, 6.f));
+    hpBarBorder.setFillColor(sf::Color::Black);
+    hpBarBorder.setOutlineThickness(2.f);
+    hpBarBorder.setOutlineColor(sf::Color(150,10,10));
 }
 
 Enemy::Enemy(const Enemy& source)
@@ -16,13 +31,15 @@ Enemy::Enemy(const Enemy& source)
     jumpForce(source.jumpForce),
     speedForce(source.speedForce),
     rotateForce(source.rotateForce),
-    sprite(source.sprite)
+    sprite(source.sprite),
+    enemyHp(source.enemyHp),
+    hpBar(source.hpBar),
+    hpBarBorder(source.hpBarBorder)
 {
     this->pos = source.pos;
     this->vel = source.vel;
     this->size = source.size;
     sprite.setTexture(*pTexture);
-    //sprite.setScale(0.05f, 0.05f);
     size = sprite.getGlobalBounds();
     size.height = size.height / 2;
     sprite.setOrigin({ sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2 });
@@ -222,6 +239,24 @@ void Enemy::setManaPointsRegen(float mpr)
 float Enemy::getManaPointsRegen()
 {
     return Mregen;
+}
+
+void Enemy::displayHealthPoints(sf::RenderTarget& rt)
+{
+    Hbar = 100.0f;
+    Hbar *= (HealthPoints / MaxHealthPoints);
+
+    hpBar.setSize(sf::Vector2f(Hbar, 6.f));
+    hpBar.setPosition(pos.x - 60.0f, pos.y - 100.0f);
+    hpBarBorder.setPosition(pos.x - 60.0f, pos.y - 100.0f);
+
+    rt.draw(hpBarBorder);
+    rt.draw(hpBar);
+
+    enemyHp.setString(std::to_string((int)HealthPoints));
+    enemyHp.setPosition(pos.x - 5.0f, pos.y - 105.0f);
+
+    rt.draw(enemyHp);
 }
 
 

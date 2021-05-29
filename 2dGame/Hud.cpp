@@ -105,3 +105,4 @@ void Hud::setPosition(sf::Vector2f& position)
 {
 	this->pos = position;
 }
+
