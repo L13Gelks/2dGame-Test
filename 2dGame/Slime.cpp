@@ -16,6 +16,7 @@ Slime::Slime(int id, int type, const sf::Vector2f& pos, const sf::Vector2f& scal
     vel.x = 1.0f;
     speed = 50.0f;
     mass = 1.0f;
+    Experience = 5.0f;
 }
 
 void Slime::rightCollision()
@@ -71,6 +72,16 @@ void Slime::SetDirection()
 
 void Slime::Update(float dt)
 {
+    if (immunity)
+    {
+        immunityCooldown += dt;
+        if (immunityCooldown >= 0.5f)
+        {
+            immunityCooldown = 0.0f;
+            immunity = false;
+            sprite.setColor(sf::Color(255, 255, 255));
+        }
+    }
     //SETTING CURRENT ANIMATION
     if (vel.y < 0) {
         //curAnimation = AnimationIndex::JumpUp;

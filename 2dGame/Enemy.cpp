@@ -114,6 +114,117 @@ void Enemy::leftCollision()
 {
 }
 
+void Enemy::setExperiencePoints(float exp)
+{
+    Experience = exp;
+}
+
+float Enemy::getExperiencePoints()
+{
+    return Experience;
+}
+
+void Enemy::setDamage(float dmg)
+{
+    if (!immunity)
+    {
+        HealthPoints -= dmg;
+        sprite.setColor(sf::Color(255, 100, 100));
+        immunity = true;
+    }
+}
+
+void Enemy::setHealthPoints(float hp)
+{
+    HealthPoints = hp;
+}
+
+float Enemy::getHealthPoints()
+{
+    return HealthPoints;
+}
+
+void Enemy::setMaxHealthPoints(float mhp)
+{
+    MaxHealthPoints = mhp;
+}
+
+float Enemy::getMaxHealthPoints()
+{
+    return MaxHealthPoints;
+}
+
+void Enemy::setHealthPointsRegen(float hpr)
+{
+    HealthRegen = hpr;
+}
+
+float Enemy::getHealthPointsRegen()
+{
+    return HealthRegen;
+}
+
+void Enemy::setStaminaPoints(float sp)
+{
+    StaminaPoints = sp;
+}
+
+float Enemy::getStaminaPoints()
+{
+    return StaminaPoints;
+}
+
+void Enemy::setMaxStaminaPoints(float msp)
+{
+    MaxStaminaPoints = msp;
+}
+
+float Enemy::getMaxStaminaPoints()
+{
+    return MaxStaminaPoints;
+}
+
+void Enemy::setStaminaPointsRegen(float spr)
+{
+    StaminaRegen = spr;
+}
+
+float Enemy::getStaminaPointsRegen()
+{
+    return StaminaRegen;
+}
+
+void Enemy::setManaPoints(float mp)
+{
+    ManaPoints = mp;
+}
+
+float Enemy::getManaPoints()
+{
+    return ManaPoints;
+}
+
+void Enemy::setMaxManaPoints(float mmp)
+{
+    MaxManaPoints = mmp;
+}
+
+float Enemy::getMaxManaPoints()
+{
+    return MaxManaPoints;
+}
+
+void Enemy::setManaPointsRegen(float mpr)
+{
+    ManaRegen = mpr;
+}
+
+float Enemy::getManaPointsRegen()
+{
+    return Mregen;
+}
+
+
 std::unordered_map<std::string, std::shared_ptr<sf::Texture>> TextureCodex2::textures;
 
 std::shared_ptr<sf::Texture> TextureCodex2::Acquire(const std::string& name)

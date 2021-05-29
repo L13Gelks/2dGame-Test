@@ -1,8 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <sstream>
 #include "Player.h"
-#define MAX_NUMBER_STATS 3
+#include <iostream>   
+#include <string>
+#define MAX_NUMBER_STATS_DISPLAYED 4
 
 class Hud
 {
@@ -21,6 +22,7 @@ private:
 	float MaxRadius = 50.0f;
 	float Hbar = 300.0f;
 	float Sbar = 200.0f;
+	int exp = 0;
 	sf::CircleShape inside;
 	sf::CircleShape outline;
 	sf::RectangleShape hpBar;
@@ -29,5 +31,5 @@ private:
 	sf::RectangleShape spBarBorder;
 	sf::Vector2f pos;
 	sf::Font font;
-	sf::Text stats[MAX_NUMBER_STATS];
+	sf::Text stats[MAX_NUMBER_STATS_DISPLAYED];
 };

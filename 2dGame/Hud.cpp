@@ -9,18 +9,23 @@ Hud::Hud(int width, int height)
 
     stats[0].setFont(font);
     stats[0].setString("");
-    stats[0].setCharacterSize(20);
+    stats[0].setCharacterSize(15);
     stats[0].setFillColor(sf::Color::White);
 
     stats[1].setFont(font);
     stats[1].setString("");
-    stats[1].setCharacterSize(20);
+    stats[1].setCharacterSize(15);
     stats[1].setFillColor(sf::Color::White);
 
     stats[2].setFont(font);
     stats[2].setString("");
-    stats[2].setCharacterSize(20);
+    stats[2].setCharacterSize(15);
     stats[2].setFillColor(sf::Color::White);
+
+    stats[3].setFont(font);
+    stats[3].setString("");
+    stats[3].setCharacterSize(15);
+    stats[3].setFillColor(sf::Color::White);
 
     hpBar.setSize(sf::Vector2f(300.0f, 10.f));
     hpBar.setFillColor(sf::Color::Red);
@@ -53,8 +58,8 @@ void Hud::draw(sf::RenderTarget& rt)
     hpBarBorder.setPosition(pos.x + MaxRadius * 3, outline.getPosition().y + MaxRadius / 2);
 
     spBar.setSize(sf::Vector2f(Sbar, 10.f));
-    spBar.setPosition(pos.x + MaxRadius * 3, (outline.getPosition().y + MaxRadius / 2) + 20.0f);
-    spBarBorder.setPosition(pos.x + MaxRadius * 3, (outline.getPosition().y + MaxRadius / 2) + 20.0f);
+    spBar.setPosition(pos.x + MaxRadius * 3, (outline.getPosition().y + MaxRadius / 2) + 40.0f);
+    spBarBorder.setPosition(pos.x + MaxRadius * 3, (outline.getPosition().y + MaxRadius / 2) + 40.0f);
    
 
     rt.draw(outline);
@@ -63,6 +68,20 @@ void Hud::draw(sf::RenderTarget& rt)
     rt.draw(hpBar);
     rt.draw(spBarBorder);
     rt.draw(spBar);
+
+
+    stats[0].setString(std::to_string(HealhPoints));
+    stats[0].setPosition(pos.x + MaxRadius * 3, (outline.getPosition().y + MaxRadius / 2) - 20.0f);
+    stats[1].setString(std::to_string(ManaPoints));
+    stats[1].setPosition(pos.x + MaxRadius * 1.75f, pos.y + MaxRadius * 1.75f);
+    stats[2].setString(std::to_string(StaminaPoints));
+    stats[2].setPosition(pos.x + MaxRadius * 3, (outline.getPosition().y + MaxRadius / 2) + 20.0f);
+    stats[3].setString(std::to_string(exp));
+    stats[3].setPosition(pos.x + MaxRadius * 3, (outline.getPosition().y + MaxRadius / 2) + 60.0f);
+    rt.draw(stats[0]);
+    rt.draw(stats[1]);
+    rt.draw(stats[2]);
+    rt.draw(stats[3]);
 }
 
 void Hud::setStats(Player& player)
@@ -78,6 +97,8 @@ void Hud::setStats(Player& player)
     StaminaPoints = player.getStaminaPoints();
     Sbar = 200.0f;
     Sbar *= (StaminaPoints / player.getMaxStaminaPoints());
+
+    exp = (int)player.getExperiencePoints();
 }
 
 void Hud::setPosition(sf::Vector2f& position)

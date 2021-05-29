@@ -44,6 +44,13 @@ void Game::WorldCreator()
         enemy.push_back(a);
     }
     else {
+        if(enemy.size() <= 1)
+        {
+            vec1 = { 500,150 };
+            vec2 = { 0.3f,0.3f };
+            Slime* a = new Slime(1, 1, vec1, vec2);
+            enemy.push_back(a);
+        }
         if (travelGroundCheckPoint >= traveledDistance+screenWidth-10 && travelGroundCheckPoint <= traveledDistance + screenWidth + 10)
         {
             std::random_device rd;
@@ -242,14 +249,17 @@ int Game::TestCollision(const sf::FloatRect& obj_size1, const sf::Vector2f& obj_
 
     if (obj_pos1.y + obj_size1.height >= obj_pos2.y && obj_pos1.y <= obj_pos2.y + obj_size2.height)
     {
+        //LeftColision obj1 || obj_pos1.x + obj_size1.width >= obj_pos2.x && obj_pos1.x <= obj_pos2.x
         if (obj_pos1.x <= obj_pos2.x + obj_size2.width && obj_pos1.x >= obj_pos2.x) {
             if (obj_pos1.y + obj_size1.height-10 > obj_pos2.y && obj_pos1.y < obj_pos2.y + obj_size2.height)
             {
                 if (obj_pos1.x + obj_size1.width >= obj_pos2.x && obj_pos1.x - 15 <= obj_pos2.x) {
+                    //Right Collision on obj 1
                     return 4;
                 }
                 else if (obj_pos1.x <= obj_pos2.x + obj_size2.width && obj_pos1.x + obj_size1.width >= obj_pos2.x + obj_size2.width)
                 {
+                    //Left Collision on obj 1
                     return 2;
                 }
             }
@@ -375,6 +385,31 @@ void Game::enemyPhysics(Player& fucker, sf::RenderTarget& window)
         int col = 0;
         sf::Vector2f enemyPos = { enemy[e]->GetPosition().x - enemy[e]->GetSize().width / 2,enemy[e]->GetPosition().y - enemy[e]->GetSize().height / 2 };
         if (e >= 0) { col = TestCollision(fucker.GetSize(), fucker.GetPosition(), enemy[e]->GetSize(), enemyPos); }
+
+        if(enemy[e]->getHealthPoints() <= 0.0f)
+        {
+            fucker.setExperiencePoints(enemy[e]->getExperiencePoints());
+            enemy.erase(enemy.begin() + e);
+            continue;
+        }else if(fucker.atk)
+        {
+            sf::FloatRect size = fucker.GetSize();
+            sf::Vector2f pos = fucker.GetPosition();
+
+            if (fucker.getFaceDirection())
+            {
+                size.width *= 0.9;
+                pos.x -= size.width*2;
+            }
+            else {
+                size.width *= 0.7;
+            }
+            if ( TestCollision(enemy[e]->GetSize(), enemyPos, size, pos) != 0 )
+            {
+                enemy[e]->setDamage(fucker.getAttackPoints());
+            }
+        }
+       
         if (col != 0)
         {
             sf::Vector2f newPos = fucker.GetPosition();

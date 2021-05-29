@@ -40,7 +40,8 @@ void Player::SetDirection(sf::Vector2f& dir)
             speed = 150.0f;
         }
     }
-    else {
+    else 
+    {
         //90px/s = 1,6 m/s
         speed = 150.0f;
     }
@@ -102,7 +103,9 @@ void Player::Update(float dt)
         else if(guard && ManaPoints <= 1.0f) {
         guard = false;
         }
-        if (atk && jumpSpeed == 0) {
+        if (atk && jumpSpeed == 0 && StaminaPoints >= 5.0f) {
+            StaminaPoints -= 5.0f;
+            Sregen = false;
             curAnimation = AnimationIndex::LightAttack;
             walking = false;
             running = false;
@@ -124,13 +127,13 @@ void Player::Update(float dt)
             if (!shiftPressed)
             {
                 walking = true;
-                faceDir = 0;
+                faceDir = false;
                 curAnimation = AnimationIndex::Walking;
             }
             else
             {
                 running = true;
-                faceDir = 0;
+                faceDir = false;
                 curAnimation = AnimationIndex::Run;
             }
         }
@@ -138,13 +141,13 @@ void Player::Update(float dt)
             if (!shiftPressed)
             {
                 walking = true;
-                faceDir = 1;
+                faceDir = true;
                 curAnimation = AnimationIndex::Walking;
             }
             else
             {
                 running = true;
-                faceDir = 1;
+                faceDir = true;
                 curAnimation = AnimationIndex::Run;
             }
         }
@@ -261,64 +264,6 @@ void Player::SetShiftPressed(bool shiftp)
     shiftPressed = shiftp;
 }
 
-/*
-bool Player::TestCollision(const  sf::FloatRect& size_in, const sf::Vector2f& pos_in, int type)
-{
-    sf::FloatRect vec = sprite.getGlobalBounds();
-
-    //IF BACKGROUND GET OUT OF HERE BUDDY
-    if (type == 2)
-    {
-        return 0;
-    }
-
-    //ASSUMING PLAYER MUST BE ON TOP OF GROUND...
-    float newPos = pos_in.y - vec.height + 1;
-
-    if (pos.y + vec.height >= pos_in.y && pos.y <= pos_in.y + size_in.height)
-    {
-        if (pos.x <= pos_in.x + size_in.width && pos.x >= pos_in.x) {
-            //IF ON GROUND NOW YOU CAN JUMP AND STOP GOING DOWN 
-            validJump = true;
-            falling = false;
-
-            //ASSUMING PLAYER MUST NOT AUTO-JUMP ON TILES IF CERTAIN HEIGHT...
-            if (pos.y + vec.height > pos_in.y + size_in.height / 8)
-            {
-                if (pos.x + vec.width / 2 >= pos_in.x && pos.x - vec.width / 2 <= pos_in.x ) {
-                    pos.x = pos_in.x - 2;
-                }
-                else if (pos.x <= pos_in.x + size_in.width && pos.x + vec.width/2 >= pos_in.x + size_in.width)
-                {
-                    pos.x = pos_in.x + size_in.width + 2;
-                }
-
-                //ASSUMING PLAYER MUST NOT BE ON TOP OF GROUND...
-                newPos = pos.y;
-
-                //SETTING THESE VALUES IF LATERAL COLISSION OCCURS
-                validJump = false;
-                falling = true;
-            }
-
-            //SETTING THE CORRECT POSTION BASED ON WHATEVER
-            pos.y = newPos;
-
-            //IF DANGEROUS GROUND GG
-            if (type == 1) { hurt = true; }
-        }
-    }
-    //SETTING POS IF COLISSION WAS DETECTED
-    sprite.setPosition(pos);
-    //IF IT HURTS CHANGED COLOR TO SOMETHING REDDISH IF NOT THEN WHATEVER
-    if (hurt == true) { sprite.setColor(sf::Color(255, 100, 100)); }
-    else { sprite.setColor(sf::Color(255, 255, 255)); }
-
-    //WHY
-    return false;
-}
-*/
-
 void Player::setHurtState(bool state)
 {
 
@@ -345,6 +290,7 @@ sf::FloatRect Player::GetSize()
 {
     size = sprite.getGlobalBounds();
     size.height = size.height * 0.75f;
+    size.width *= 0.5;
     return size;
 }
 
@@ -361,6 +307,30 @@ void Player::setPosition(sf::Vector2f& newPos)
 void Player::setDamage(float dmg)
 {
     HealthPoints -= dmg;
+}
+
+bool Player::getFaceDirection()
+{
+    return faceDir;
+}
+
+void Player::setExperiencePoints(float exp)
+{
+    Experience += exp;
+}
+
+float Player::getExperiencePoints()
+{
+    return Experience;
+}
+
+void Player::setAttackPoints(float atk)
+{
+}
+
+float Player::getAttackPoints()
+{
+    return Attack;
 }
 
 void Player::setHealthPoints(float hp)

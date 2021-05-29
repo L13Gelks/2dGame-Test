@@ -22,6 +22,7 @@ public:
     bool atk = false;
     bool atkAnimation = false;
     void setDamage(float dmg);
+    bool getFaceDirection();
 private:
 
 private:
@@ -42,7 +43,7 @@ private:
     bool guard = false;
     float jumpSpeed = 0.0f;
     bool hurt = false;
-    bool faceDir = 0;
+    bool faceDir = false;
     bool walking = false;
     bool running = false;
     bool shiftPressed = false;
@@ -55,6 +56,10 @@ private:
     float seconds = 0.0f;
 public:
     //Stats
+    void setExperiencePoints(float exp);
+    float getExperiencePoints();
+    void setAttackPoints(float atk);
+    float getAttackPoints();
     void setHealthPoints(float hp);
     float getHealthPoints();
     void setMaxHealthPoints(float mhp);
@@ -76,6 +81,8 @@ public:
 
 private:
     //Stats
+    float Experience = 0.0f;
+    float Attack = 25.0f;
     float HealthPoints = 400.0f;
     float MaxHealthPoints = 400.0f;
     float StaminaPoints = 100.0f;
